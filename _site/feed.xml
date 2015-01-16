@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title></title>
+		<description>Stylish Jekyll Theme</description>
+		<link>/</link>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Git提交错误后如何回退</title>
+				<description>&lt;h4 id=&quot;spring-jdbc&quot;&gt;使用Spring JDBC方式访问数据库&lt;/h4&gt;
+
+&lt;h5 id=&quot;section&quot;&gt;为什么&lt;/h5&gt;
+
+&lt;p&gt;首先看一下使用最为原始的JDBC向数据库中插入一条记录：&lt;/p&gt;
+
+&lt;p&gt;```
+	private static final String INSERT_STUDENT = “insert into 		spitter (username, password) values (?,?)”;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;private DataSource dataSource;
+
+public void addStudent(Spitter stu) {
+	Connection conn = null;
+	PreparedStatement stmt = null;
+	try {
+		conn = dataSource.getConnection();
+		stmt = conn.prepareStatement(INSERT_STUDENT);
+		stmt.setString(1, stu.getUserName());
+		stmt.setString(2, stu.getPassWord());
+		stmt.execute();
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		try {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+} ``` 传统的最原始的基于JDBC访问数据库的方式是非常麻烦的，需要写下很多与数据访问无关的代码，主要在于对异常的捕捉。SQLException不会告诉你任何有用的信息，但是你必须捕获。SQLException被认为是数据访问的通用异常，对于所有的数据访问问题都会抛出SQLException，而不是对每种可能的问题都会有不同的异常类型。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;所以Spring的好处就来了：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Spring 提供了平台无关的异常体系，这些异常不会与任何一个Jdbc或ORM框架耦合，同时也具有描述性（加粗）.Spring的异常体系都是继承自DataAccessException ，这个DataAccessException的特殊之处在于是一个非检查性异常，也就是没有必要捕获Spring所抛出的数据访问异常。&lt;/li&gt;
+  &lt;li&gt;Spring提供了数据访问的模板，把这些不必要的操作封装起来，我们在使用的时候就只关心数据访问部分。Spring提供了很多模板，JdbcTemplate/HibernateTemplate/JpaTemplate …&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;section-1&quot;&gt;如何用&lt;/h3&gt;
+
+&lt;p&gt;主要介绍如何使用Spring的JdbcTemplate 来访问数据库。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;首先配置数据源，这里使用的dbcp的数据源，当然也可以选用其他的数据源：&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;
+&amp;lt;bean id=&quot;dataSource&quot;
+  	class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;&amp;gt;
+  	&amp;lt;property name=&quot;driverClassName&quot; value=&quot;com.mysql.jdbc.Driver&quot; /&amp;gt;  
+    &amp;lt;property name=&quot;url&quot; value=&quot;jdbc:mysql://localhost:3306/spring&quot; /&amp;gt;  
+    &amp;lt;property name=&quot;username&quot; value=&quot;root&quot; /&amp;gt;
+    &amp;lt;property name=&quot;password&quot; value=&quot;root&quot;/&amp;gt;
+    &amp;lt;property name=&quot;initialSize&quot; value=&quot;5&quot; /&amp;gt;
+    &amp;lt;property name=&quot;maxActive&quot; value=&quot;10&quot; /&amp;gt;
+  &amp;lt;/bean&amp;gt;
+&lt;/code&gt;
+*  编写DAO文件，当然这里就是StudentDAO，根据Spring对数据访问的哲学，DAO 文件是一个接口文件，只是提供基本的饿数据访问功能，并不是做出实现，这样的好处在于可以随意的切换持久层的框架。在这里只是简单地写了一个插入的方法：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+public interface StudentDAO {
+	public void addStudent(Student stu);
+}
+&lt;/code&gt;
+*  编写DAO的实现类，这里就是JdbcStudentDAO，这个实现类里面首先是继承了JdbcDaoSupport，因为这个JdbcDaoSupport类里面就直接包含一个jdbcTemplate的属性，可以直接使用getJdbcTemplate得到jdbcTemplate。代码如下：&lt;/p&gt;
+
+&lt;p&gt;```
+public class JdbcStudentDAO extends JdbcDaoSupport implements StudentDAO {
+	public void addStudent(Student stu) {
+		getJdbcTemplate().update(“insert into student (username, password) values (?,?)”, 
+				stu.getUserName(), stu.getPassWord());
+	}&lt;/p&gt;
+
+&lt;p&gt;}
+```&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;根据以上三步就能实现使用Spring的jdbcTemplate 来实现数据访问。&lt;/p&gt;
+</description>
+				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
+				<link>/2015/01/05/%E4%BD%BF%E7%94%A8spring_jdbc%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html</link>
+				<guid isPermaLink="true">/2015/01/05/%E4%BD%BF%E7%94%A8spring_jdbc%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html</guid>
+			</item>
+		
+			<item>
+				<title>使用Spring hibernate && JPA的方式访问数据库</title>
+				<description>&lt;h4 id=&quot;spring-hibernate-&quot;&gt;Spring hibernate 访问数据库&lt;/h4&gt;
+
+&lt;p&gt;hibernate 操作数据库依赖的是Session，所以首先要做的事情就是在Spring的配置文件里面配置Session Factory。&lt;/p&gt;
+
+&lt;p&gt;在配置Hibernate Session 工厂Bean的时候，需要确定持久层对象是通过XML文件还是通过注解来进行配置的，如果选择是通过xml文件来定义对象与数据库之间的映射，那么需要在Spring中配置LocalSessionFactoryBean;&lt;/p&gt;
+
+&lt;p&gt;比如以下配置信息：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+ &amp;lt;bean id=&quot;sessionFactory&quot; class=&quot;org.springframework.orm.hibernate3.LocalSessionFactoryBean&quot;&amp;gt;
+  	&amp;lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&amp;gt;
+  	&amp;lt;property name=&quot;mappingResources&quot;&amp;gt;
+  		&amp;lt;list&amp;gt;
+  			&amp;lt;value&amp;gt;student.hbm.xml&amp;lt;/value&amp;gt;
+  	  		&amp;lt;/list&amp;gt;
+  	&amp;lt;/property&amp;gt;
+  	&amp;lt;property name=&quot;hibernateProperties&quot;&amp;gt;
+  		&amp;lt;props&amp;gt;
+  			&amp;lt;prop key=&quot;dialect&quot;&amp;gt;org.hibernate.dialect.MySQL5InnoDBDialect&amp;lt;/prop&amp;gt;
+  		&amp;lt;/props&amp;gt;
+  	&amp;lt;/property&amp;gt;
+  &amp;lt;/bean&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;在配置LocalSessionFactoryBean 的时候，需要使用三个属性，第一个属性是制定数据源，第二个属性是制定hibernate映射文件的位置，第三个属性是配置hibernate如何操作的细节，这里使用的mysql的操作。&lt;/p&gt;
+
+&lt;p&gt;如果需要使用注解的方式来使用hibernate，可以用如下的配置：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+&amp;lt;bean id=&quot;sessionFactory2&quot;
+		class=&quot;org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean&quot;&amp;gt;
+		&amp;lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot; /&amp;gt;
+		&amp;lt;property name=&quot;packagesToScan&quot; value=&quot;con.spring.demo.domain&quot; /&amp;gt;
+		&amp;lt;property name=&quot;hibernateProperties&quot;&amp;gt;
+			&amp;lt;props&amp;gt;
+				&amp;lt;prop key=&quot;dialect&quot;&amp;gt;org.hibernate.dialect.MySQL5InnoDBDialect&amp;lt;/prop&amp;gt;
+			&amp;lt;/props&amp;gt;
+		&amp;lt;/property&amp;gt;
+&amp;lt;/bean&amp;gt;
+&lt;/code&gt;
+这里使用packagesToScan 表明hibernate将自动扫描这个包下的类并持久化这些类。&lt;/p&gt;
+
+&lt;p&gt;在配置好sessionFactory之后，就可以将其注入到自己的DAO类中，在使用的时候可以继承HibernateDaoSupport， 这个里面封装了HibernateTemplate，可以直接使用。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+public class StudentDAO extents HibernateDaoSupport {
+	...
+}
+&lt;/code&gt;
+在配置StudentDAO的时候就需要将sessionFactory 注入进入即可。&lt;/p&gt;
+
+&lt;h4 id=&quot;jpa&quot;&gt;使用 JPA的方式访问数据库&lt;/h4&gt;
+
+&lt;p&gt;简单来说，基于JPA的应用程序使用EntityManagerFactory 的实现类来获取EntityManager实例，JPA定义了两种类型的实体管理器。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;应用程序管理类型&lt;/li&gt;
+  &lt;li&gt;容器管理类型&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
+				<link>/2015/01/05/%E4%BD%BF%E7%94%A8spring_hibernate_&&_jpa%E7%9A%84%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html</link>
+				<guid isPermaLink="true">/2015/01/05/%E4%BD%BF%E7%94%A8spring_hibernate_&&_jpa%E7%9A%84%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html</guid>
+			</item>
+		
+			<item>
+				<title>feedback_me 插件的使用</title>
+				<description>&lt;p&gt;This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;feedback_me 在使用后的效果如下：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5056362/a681f7e6-6cba-11e4-9eb2-bdcb2bf2d18d.png&quot; alt=&quot;1&quot; /&gt;
+&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5056363/c164806a-6cba-11e4-9f83-f38c9e18653a.png&quot; alt=&quot;2&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;它会附着在窗口的一边，点击后会出现信息表，填写完成后点击提交即可，提交完成后feedbach_me 会将填写的信息通过post请求发送到你指定的url地址，你可以在后台写一个controller专门负责接收这个请求。这个插件的好处在于整个过程使用简单、有效，只需要通过简单的配置就能完成。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;官方的文档的地址： http://plugins.jquery.com/feedback_me 
+github的地址： https://github.com/vedmack/feedback_me&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h5 id=&quot;section&quot;&gt;看一下如何使用它：&lt;/h5&gt;
+
+&lt;p&gt;首先他是一个jQuery 插件，需要在一开始引入jQuery，然后引入它指定的js和css文件即可。&lt;/p&gt;
+
+&lt;p&gt;上图例子实现的代码：&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;
+	&amp;lt;link href=&quot;../../styles/jquery/jquery.feedback_me.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&amp;gt;
+	&amp;lt;script type=&quot;text/javascript&quot; src=&quot;../../scripts/jquery/jquery.min.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+	&amp;lt;script type=&quot;text/javascript&quot; src=&quot;../../scripts/jquery/plugin/jquery.feedback_me.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
+	&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
+		$(document).ready(function(){
+    		fm_options = {
+    			// 这个参数是设置这个反馈按钮在页面的哪个位置，left-bottom ...
+        		position: &quot;right-top&quot;,
+        		// 是否显示邮箱
+        		show_email: true,
+        		email_label: &quot;邮箱&quot;,
+        		email_required: true,
+        		// 单选框
+       			show_radio_button_list: true,
+       			radio_button_list_labels: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;],
+   				radio_button_list_title: &quot;给个好评哦...&quot;,
+   				radio_button_list_required: false,
+   				//
+   				name_required: true,
+        		name_label: &quot;名字&quot;,
+    			// 
+    			message_label: &quot;反馈信息&quot;,
+    			message_required: true,
+        		show_asterisk_for_required: true,
+        		// 这个很重要，这是提交后信息发送到哪里
+        		feedback_url: &quot;http://.../feedback/message&quot;,
+        		// 提交信息后提示
+        		delayed_options: {
+            		send_fail : &quot;提交失败 :(. &quot;,
+           			 send_success : &quot;提交成功，谢谢参与反馈，^_^ !&quot;
+        		},
+        		submit_label: &quot;提交&quot;,
+    			// 页面按钮提示信息
+    			trigger_label: &quot;意见反馈&quot;
+    		};
+    		//init feedback_me plugin
+    		fm.init(fm_options);
+		});
+	&amp;lt;/script&amp;gt;
+&lt;/code&gt;&lt;/p&gt;
+</description>
+				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
+				<link>/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</link>
+				<guid isPermaLink="true">/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</guid>
+			</item>
+		
+			<item>
+				<title>Git提交错误后如何回退</title>
+				<description>&lt;blockquote&gt;
+  &lt;p&gt;在使用Git的时候需要维护一个自己的分支模型，推荐使用: 
+http://nvie.com/posts/a-successful-git-branching-model/  &lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;总体说来有一下两点：&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在中央仓库保存两个永久分支，master &amp;amp;&amp;amp; develop，master分支是发布分支，每次发布就是从master上打包发布，程序是不允许直接在master提交代码，只能通过其他分支合并到master分支。develop分支是开发分支，当develop上得源代码达到一个稳定状态的时候就可以把develop的代码合并到master上。&lt;/li&gt;
+  &lt;li&gt;除去master和develop这两个永久分支，还存在一些暂时的分支。
+    &lt;ul&gt;
+      &lt;li&gt;线上的紧急Bug需要修复，这个时候就需要创建一个hotfix分支，这个分支是从master上检出，完成修复后双向合并到master和develop上，保证develop与master代码的同步，合并完后删除hotfix 分支。&lt;/li&gt;
+      &lt;li&gt;还比如，要开发一个新功能，这个时候需要创建一个feature分支，这个分支就从develop上检出，可以把这个分支推到服务器上让更多地人参与开发，当然也可以不推倒服务器上，只在本地开发，开发完成后合并到develop上。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;下面这个是我们项目中的网络提交图：&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5021605/91bdfa3e-6b12-11e4-8b66-3926fb2c0a29.png&quot; alt=&quot;test2&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;这只是简单介说了一下分支模型，具体的介绍可以参考上面给出的链接。如果在提交的过程中直接在master上做了修改，或者不小心把master合并到了develop分支上，如何回退？&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h4 id=&quot;master&quot;&gt;直接在master分支上修改代码并提交如何回退&lt;/h4&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;如果直接在master分支上做了修改并提交到了服务器，这种操作在上面所描述的分支模型中是严格禁止的，如果出现这种情况如何回退：&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;ul&gt;
+    &lt;li&gt;在本地切到master分支下，使用 git chenkout -b  temp-branch，这样就从master分支上创建了一个新的临时分支，并且切到这个分支下。&lt;/li&gt;
+    &lt;li&gt;git reset –hard commitpoint, 这个commitpoint代表你要回滚的提交点&lt;/li&gt;
+    &lt;li&gt;git branch -D master , 这个操作是删除本地master分支&lt;/li&gt;
+    &lt;li&gt;git push origin :master, 删除远程服务器上得master分支，这里的删除就是推送一个空分支到远程master上。&lt;b&gt;但是注意的是远程master可能是一个default设置，这样服务器是不允许删除master分支，这个时候就需要在项目设置上将default标签切换到另一个分支上，上面的删除操作才能成功&lt;/b&gt;&lt;/li&gt;
+    &lt;li&gt;将远程分支删掉后需要把回滚后的分支推到远程服务器上，git push origin temp-branch:master，这样就能完成回退操作&lt;/li&gt;
+    &lt;li&gt;最后是删除temp-branch 分支，git checkout master, git branch -D temp-branch.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+</description>
+				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
+				<link>/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html</link>
+				<guid isPermaLink="true">/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html</guid>
+			</item>
+		
+	</channel>
+</rss>

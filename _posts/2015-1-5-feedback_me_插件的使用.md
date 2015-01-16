@@ -4,9 +4,7 @@ title: feedback_me 插件的使用
 
 ---
 
-feedback_me
-
-> This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.
+This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.
 
 ---
 

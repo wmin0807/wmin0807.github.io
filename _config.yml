@@ -1,12 +1,31 @@
-title:        Hyde
-tagline:      'Hyde, a Jekyll theme'
-description:  'An elegant open source and mobile first theme for <a href="http://jekyllrb.com" target="_blank">Jekyll</a>. Made by <a href="https://twitter.com/mdo" target="_blank">@mdo</a>.'
-url:          http://andhyde.com
-version:      1.1.1
+# visit https://github.com/mojombo/jekyll/wiki/Configuration for more settings
+
+paginate: 10 # pagination based on number of posts
+paginate_path: "page:num"
+exclude: ["README.md"] # files to exclude
+highlighter: pygments
+markdown: kramdown
+
+
+defaults:
+  -
+    scope:
+      path: "" # empty string for all files
+    values:
+      title: wangmin's blog
+
+description: Stylish Jekyll Theme
 author:
-  name:       ''
-  email:      ''
-markdown:     rdiscount
-permalink:    pretty
-pygments:     true
-paginate:     5
+  name: wangmin
+  email: w0807m@163.com
+  github: wmin0807
+  twitter: dbtek
+  pinterest: asd123
+  linkedin: asd123
+  bio: enjoy life, enjoy coding
+  email_md5: 726351295ec82e145928582f595aa3aa
+
+categories_path: categories.html
+tags_path: tags.html
+
+BASE_PATH:

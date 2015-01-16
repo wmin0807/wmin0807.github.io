@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>feedback_me 插件的使用</title>
+	
+	<meta name="author" content="dbyll">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://github.com/https://github.com/wmin0807">
+				<i class="fa fa-github"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy code
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="https://github.com/https://github.com/wmin0807">
+				<i class="fa fa-github-alt fa-lg"></i>
+			</a>
+		</li>
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>feedback_me 插件的使用 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   January 
+	   5th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <p>This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.</p>
+
+<hr />
+
+<p>feedback_me 在使用后的效果如下：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/5568742/5056362/a681f7e6-6cba-11e4-9eb2-bdcb2bf2d18d.png" alt="1" />
+<img src="https://cloud.githubusercontent.com/assets/5568742/5056363/c164806a-6cba-11e4-9f83-f38c9e18653a.png" alt="2" /></p>
+
+<hr />
+
+<p>它会附着在窗口的一边，点击后会出现信息表，填写完成后点击提交即可，提交完成后feedbach_me 会将填写的信息通过post请求发送到你指定的url地址，你可以在后台写一个controller专门负责接收这个请求。这个插件的好处在于整个过程使用简单、有效，只需要通过简单的配置就能完成。</p>
+
+<blockquote>
+  <p>官方的文档的地址： http://plugins.jquery.com/feedback_me 
+github的地址： https://github.com/vedmack/feedback_me</p>
+</blockquote>
+
+<h5 id="section">看一下如何使用它：</h5>
+
+<p>首先他是一个jQuery 插件，需要在一开始引入jQuery，然后引入它指定的js和css文件即可。</p>
+
+<p>上图例子实现的代码：</p>
+
+<p><code>
+	&lt;link href="../../styles/jquery/jquery.feedback_me.css" rel="stylesheet" type="text/css"&gt;
+	&lt;script type="text/javascript" src="../../scripts/jquery/jquery.min.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript" src="../../scripts/jquery/plugin/jquery.feedback_me.js"&gt;&lt;/script&gt;
+	&lt;script type="text/javascript"&gt;
+		$(document).ready(function(){
+    		fm_options = {
+    			// 这个参数是设置这个反馈按钮在页面的哪个位置，left-bottom ...
+        		position: "right-top",
+        		// 是否显示邮箱
+        		show_email: true,
+        		email_label: "邮箱",
+        		email_required: true,
+        		// 单选框
+       			show_radio_button_list: true,
+       			radio_button_list_labels: ["1", "2", "3", "4", "5"],
+   				radio_button_list_title: "给个好评哦...",
+   				radio_button_list_required: false,
+   				//
+   				name_required: true,
+        		name_label: "名字",
+    			// 
+    			message_label: "反馈信息",
+    			message_required: true,
+        		show_asterisk_for_required: true,
+        		// 这个很重要，这是提交后信息发送到哪里
+        		feedback_url: "http://.../feedback/message",
+        		// 提交信息后提示
+        		delayed_options: {
+            		send_fail : "提交失败 :(. ",
+           			 send_success : "提交成功，谢谢参与反馈，^_^ !"
+        		},
+        		submit_label: "提交",
+    			// 页面按钮提示信息
+    			trigger_label: "意见反馈"
+    		};
+    		//init feedback_me plugin
+    		fm.init(fm_options);
+		});
+	&lt;/script&gt;
+</code></p>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=feedback_me 插件的使用&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">dbyll</h4>
+        <p class="author-bio">enjoy life, enjoy code</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html" title="Git提交错误后如何回退">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/2015/01/05/%E4%BD%BF%E7%94%A8spring_hibernate_&&_jpa%E7%9A%84%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html" title="使用Spring hibernate && JPA的方式访问数据库">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
