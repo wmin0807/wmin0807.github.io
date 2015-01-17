@@ -4,7 +4,7 @@
 		<title></title>
 		<description>Stylish Jekyll Theme</description>
 		<link>/</link>
-		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
 				<title>Git提交错误后如何回退</title>
