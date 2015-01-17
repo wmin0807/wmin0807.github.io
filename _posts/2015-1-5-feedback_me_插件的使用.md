@@ -27,7 +27,7 @@ feedback_me 在使用后的效果如下：
 
 上图例子实现的代码：
 
-```
+
 	<link href="../../styles/jquery/jquery.feedback_me.css" rel="stylesheet" type="text/css">
 	<script type="text/javascript" src="../../scripts/jquery/jquery.min.js"></script>
 	<script type="text/javascript" src="../../scripts/jquery/plugin/jquery.feedback_me.js"></script>
@@ -43,10 +43,10 @@ feedback_me 在使用后的效果如下：
         		// 单选框
        			show_radio_button_list: true,
        			radio_button_list_labels: ["1", "2", "3", "4", "5"],
-   				radio_button_list_title: "给个好评哦...",
-   				radio_button_list_required: false,
-   				//
-   				name_required: true,
+       			radio_button_list_title: "给个好评哦...",
+       			radio_button_list_required: false,
+       			//
+       			name_required: true,
         		name_label: "名字",
     			// 
     			message_label: "反馈信息",
@@ -67,4 +67,3 @@ feedback_me 在使用后的效果如下：
     		fm.init(fm_options);
 		});
 	</script>
-```

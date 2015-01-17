@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>使用Spring hibernate && JPA的方式访问数据库</title>
+	<title>spring io 平台介绍</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -127,7 +127,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>使用Spring hibernate && JPA的方式访问数据库 </h1>
+  <h1>spring io 平台介绍 </h1>
 </div>
 	
 <article>
@@ -136,70 +136,46 @@
 	 <span class="post-date">
 	   
 	   January 
-	   5th,
+	   16th,
 	   
 	   2015
 	 </span>
 	  <div class="article_body">
-	  <h4 id="spring-hibernate-">Spring hibernate 访问数据库</h4>
+	  <p>Spring IO Platform reference对Spring IO的介绍如下：</p>
 
-<p>hibernate 操作数据库依赖的是Session，所以首先要做的事情就是在Spring的配置文件里面配置Session Factory。</p>
+<blockquote>
+  <p>Spring IO Platform is primarily intended to be used with a dependency management system. It works well with both Maven and Gradle.</p>
+</blockquote>
 
-<p>在配置Hibernate Session 工厂Bean的时候，需要确定持久层对象是通过XML文件还是通过注解来进行配置的，如果选择是通过xml文件来定义对象与数据库之间的映射，那么需要在Spring中配置LocalSessionFactoryBean;</p>
+<p>具体如何理解Spring IO Platform 的作用了？</p>
 
-<p>比如以下配置信息：</p>
+<p>以前在升级Spring项目的时候是手动的一个一个升级Spring模块的版本，并且一个模块与另一个模块之间的依赖适不适合你并不知道，你还需要测试或者找资料，所以比较麻烦。Spring IO Platform它能够结合Maven (或Gradle)管理每个模块的依赖，使得开发者不再花心思研究各个Java库相互依赖的版本，只需要引入Spring IO Platform即可，因为这些库的依赖关系Spring IO Platform已经帮你验证过了。</p>
 
-<p><code>
- &lt;bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean"&gt;
-  	&lt;property name="dataSource" ref="dataSource" /&gt;
-  	&lt;property name="mappingResources"&gt;
-  		&lt;list&gt;
-  			&lt;value&gt;student.hbm.xml&lt;/value&gt;
-  	  		&lt;/list&gt;
-  	&lt;/property&gt;
-  	&lt;property name="hibernateProperties"&gt;
-  		&lt;props&gt;
-  			&lt;prop key="dialect"&gt;org.hibernate.dialect.MySQL5InnoDBDialect&lt;/prop&gt;
-  		&lt;/props&gt;
-  	&lt;/property&gt;
-  &lt;/bean&gt;
-</code></p>
+<p>在Maven中的使用也比较简单，只需要在pom.xml文件中加入依赖管理就可：</p>
 
-<p>在配置LocalSessionFactoryBean 的时候，需要使用三个属性，第一个属性是制定数据源，第二个属性是制定hibernate映射文件的位置，第三个属性是配置hibernate如何操作的细节，这里使用的mysql的操作。</p>
+<pre><code>&lt;dependencyManagement&gt;
+    &lt;dependencies&gt;
+		&lt;dependency&gt; 
+			&lt;groupId&gt;io.spring.platform&lt;/groupId&gt; 				&lt;artifactId&gt;platform-bom&lt;/artifactId&gt; 				&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; &lt;type&gt;pom&lt;/type&gt;
+			&lt;scope&gt;import&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+&lt;/dependencyManagement&gt;
+</code></pre>
 
-<p>如果需要使用注解的方式来使用hibernate，可以用如下的配置：</p>
+<p>当然也可以使用继承的方式：</p>
 
-<p><code>
-&lt;bean id="sessionFactory2"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean"&gt;
-		&lt;property name="dataSource" ref="dataSource" /&gt;
-		&lt;property name="packagesToScan" value="con.spring.demo.domain" /&gt;
-		&lt;property name="hibernateProperties"&gt;
-			&lt;props&gt;
-				&lt;prop key="dialect"&gt;org.hibernate.dialect.MySQL5InnoDBDialect&lt;/prop&gt;
-			&lt;/props&gt;
-		&lt;/property&gt;
-&lt;/bean&gt;
-</code>
-这里使用packagesToScan 表明hibernate将自动扫描这个包下的类并持久化这些类。</p>
+<pre><code>&lt;parent&gt; 
+	&lt;groupId&gt;io.spring.platform&lt;/groupId&gt; 			&lt;artifactId&gt;platform-bom&lt;/artifactId&gt; 			&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; &lt;relativePath/&gt;
+&lt;/parent&gt;
+</code></pre>
 
-<p>在配置好sessionFactory之后，就可以将其注入到自己的DAO类中，在使用的时候可以继承HibernateDaoSupport， 这个里面封装了HibernateTemplate，可以直接使用。</p>
+<hr />
 
-<p><code>
-public class StudentDAO extents HibernateDaoSupport {
-	...
-}
-</code>
-在配置StudentDAO的时候就需要将sessionFactory 注入进入即可。</p>
+<p>参考：</p>
 
-<h4 id="jpa">使用 JPA的方式访问数据库</h4>
+<p>http://docs.spring.io/platform/docs/1.1.2.BUILD-SNAPSHOT/reference/htmlsingle/</p>
 
-<p>简单来说，基于JPA的应用程序使用EntityManagerFactory 的实现类来获取EntityManager实例，JPA定义了两种类型的实体管理器。</p>
-
-<ul>
-  <li>应用程序管理类型</li>
-  <li>容器管理类型</li>
-</ul>
 
 	  </div>
 
@@ -212,7 +188,7 @@ public class StudentDAO extents HibernateDaoSupport {
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=使用Spring hibernate && JPA的方式访问数据库&via=dbtek"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=spring io 平台介绍&via=dbtek"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -243,7 +219,7 @@ public class StudentDAO extents HibernateDaoSupport {
 		  <li class="previous"><a href="/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html" title="feedback_me 插件的使用">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/01/05/%E4%BD%BF%E7%94%A8spring_jdbc%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html" title="Git提交错误后如何回退">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 

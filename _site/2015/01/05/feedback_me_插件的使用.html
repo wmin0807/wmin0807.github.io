@@ -165,47 +165,46 @@ github的地址： https://github.com/vedmack/feedback_me</p>
 
 <p>上图例子实现的代码：</p>
 
-<p><code>
-	&lt;link href="../../styles/jquery/jquery.feedback_me.css" rel="stylesheet" type="text/css"&gt;
-	&lt;script type="text/javascript" src="../../scripts/jquery/jquery.min.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript" src="../../scripts/jquery/plugin/jquery.feedback_me.js"&gt;&lt;/script&gt;
-	&lt;script type="text/javascript"&gt;
-		$(document).ready(function(){
-    		fm_options = {
-    			// 这个参数是设置这个反馈按钮在页面的哪个位置，left-bottom ...
-        		position: "right-top",
-        		// 是否显示邮箱
-        		show_email: true,
-        		email_label: "邮箱",
-        		email_required: true,
-        		// 单选框
-       			show_radio_button_list: true,
-       			radio_button_list_labels: ["1", "2", "3", "4", "5"],
-   				radio_button_list_title: "给个好评哦...",
-   				radio_button_list_required: false,
-   				//
-   				name_required: true,
-        		name_label: "名字",
-    			// 
-    			message_label: "反馈信息",
-    			message_required: true,
-        		show_asterisk_for_required: true,
-        		// 这个很重要，这是提交后信息发送到哪里
-        		feedback_url: "http://.../feedback/message",
-        		// 提交信息后提示
-        		delayed_options: {
-            		send_fail : "提交失败 :(. ",
-           			 send_success : "提交成功，谢谢参与反馈，^_^ !"
-        		},
-        		submit_label: "提交",
-    			// 页面按钮提示信息
-    			trigger_label: "意见反馈"
-    		};
-    		//init feedback_me plugin
-    		fm.init(fm_options);
-		});
-	&lt;/script&gt;
-</code></p>
+<pre><code>&lt;link href="../../styles/jquery/jquery.feedback_me.css" rel="stylesheet" type="text/css"&gt;
+&lt;script type="text/javascript" src="../../scripts/jquery/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../../scripts/jquery/plugin/jquery.feedback_me.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+	$(document).ready(function(){
+		fm_options = {
+			// 这个参数是设置这个反馈按钮在页面的哪个位置，left-bottom ...
+    		position: "right-top",
+    		// 是否显示邮箱
+    		show_email: true,
+    		email_label: "邮箱",
+    		email_required: true,
+    		// 单选框
+   			show_radio_button_list: true,
+   			radio_button_list_labels: ["1", "2", "3", "4", "5"],
+   			radio_button_list_title: "给个好评哦...",
+   			radio_button_list_required: false,
+   			//
+   			name_required: true,
+    		name_label: "名字",
+			// 
+			message_label: "反馈信息",
+			message_required: true,
+    		show_asterisk_for_required: true,
+    		// 这个很重要，这是提交后信息发送到哪里
+    		feedback_url: "http://.../feedback/message",
+    		// 提交信息后提示
+    		delayed_options: {
+        		send_fail : "提交失败 :(. ",
+       			 send_success : "提交成功，谢谢参与反馈，^_^ !"
+    		},
+    		submit_label: "提交",
+			// 页面按钮提示信息
+			trigger_label: "意见反馈"
+		};
+		//init feedback_me plugin
+		fm.init(fm_options);
+	});
+&lt;/script&gt;
+</code></pre>
 
 	  </div>
 
@@ -249,7 +248,7 @@ github的地址： https://github.com/vedmack/feedback_me</p>
 		  <li class="previous"><a href="/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html" title="Git提交错误后如何回退">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/01/05/%E4%BD%BF%E7%94%A8spring_hibernate_&&_jpa%E7%9A%84%E6%96%B9%E5%BC%8F%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93.html" title="使用Spring hibernate && JPA的方式访问数据库">Next &rarr;</a></li>
+		  <li class="next"><a href="/2015/01/16/spring_io_platform.html" title="spring io 平台介绍">Next &rarr;</a></li>
 		  
 		</ul>
 
