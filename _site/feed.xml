@@ -21,11 +21,14 @@
 &lt;p&gt;在Maven中的使用也比较简单，只需要在pom.xml文件中加入依赖管理就可：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;lt;dependencyManagement&amp;gt;
-    &amp;lt;dependencies&amp;gt;
+	&amp;lt;dependencies&amp;gt;
 		&amp;lt;dependency&amp;gt; 
-			&amp;lt;groupId&amp;gt;io.spring.platform&amp;lt;/groupId&amp;gt; 				&amp;lt;artifactId&amp;gt;platform-bom&amp;lt;/artifactId&amp;gt; 				&amp;lt;version&amp;gt;1.1.2.BUILD-SNAPSHOT&amp;lt;/version&amp;gt; &amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;
+			&amp;lt;groupId&amp;gt;io.spring.platform&amp;lt;/groupId&amp;gt;
+			&amp;lt;artifactId&amp;gt;platform-bom&amp;lt;/artifactId&amp;gt;
+			&amp;lt;version&amp;gt;1.1.2.BUILD-SNAPSHOT&amp;lt;/version&amp;gt; 
+			&amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;
 			&amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;
-        &amp;lt;/dependency&amp;gt;
+		&amp;lt;/dependency&amp;gt;
     &amp;lt;/dependencies&amp;gt;
 &amp;lt;/dependencyManagement&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
@@ -33,7 +36,10 @@
 &lt;p&gt;当然也可以使用继承的方式：&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;&amp;lt;parent&amp;gt; 
-	&amp;lt;groupId&amp;gt;io.spring.platform&amp;lt;/groupId&amp;gt; 			&amp;lt;artifactId&amp;gt;platform-bom&amp;lt;/artifactId&amp;gt; 			&amp;lt;version&amp;gt;1.1.2.BUILD-SNAPSHOT&amp;lt;/version&amp;gt; &amp;lt;relativePath/&amp;gt;
+	&amp;lt;groupId&amp;gt;io.spring.platform&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;platform-bom&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;1.1.2.BUILD-SNAPSHOT&amp;lt;/version&amp;gt; 
+	&amp;lt;relativePath/&amp;gt;
 &amp;lt;/parent&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;
 

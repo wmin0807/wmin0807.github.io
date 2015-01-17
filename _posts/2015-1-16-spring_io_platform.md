@@ -14,11 +14,19 @@ Spring IO Platform reference对Spring IO的介绍如下：
 
 在Maven中的使用也比较简单，只需要在pom.xml文件中加入依赖管理就可：
 
-	<dependencyManagement>        <dependencies>			<dependency> 
-				<groupId>io.spring.platform</groupId> 				<artifactId>platform-bom</artifactId> 				<version>1.1.2.BUILD-SNAPSHOT</version> <type>pom</type>				<scope>import</scope>            </dependency>        </dependencies>    </dependencyManagement>
+	<dependencyManagement>
+		<dependencies>			<dependency> 
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>1.1.2.BUILD-SNAPSHOT</version> 
+				<type>pom</type>				<scope>import</scope>
+			</dependency>        </dependencies>    </dependencyManagement>
 当然也可以使用继承的方式：
 	<parent> 
-		<groupId>io.spring.platform</groupId> 			<artifactId>platform-bom</artifactId> 			<version>1.1.2.BUILD-SNAPSHOT</version> <relativePath/>	</parent>
+		<groupId>io.spring.platform</groupId>
+		<artifactId>platform-bom</artifactId>
+		<version>1.1.2.BUILD-SNAPSHOT</version> 
+		<relativePath/>	</parent>
 
 ---
 

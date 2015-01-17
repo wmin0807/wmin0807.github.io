@@ -154,11 +154,14 @@
 <p>在Maven中的使用也比较简单，只需要在pom.xml文件中加入依赖管理就可：</p>
 
 <pre><code>&lt;dependencyManagement&gt;
-    &lt;dependencies&gt;
+	&lt;dependencies&gt;
 		&lt;dependency&gt; 
-			&lt;groupId&gt;io.spring.platform&lt;/groupId&gt; 				&lt;artifactId&gt;platform-bom&lt;/artifactId&gt; 				&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; &lt;type&gt;pom&lt;/type&gt;
+			&lt;groupId&gt;io.spring.platform&lt;/groupId&gt;
+			&lt;artifactId&gt;platform-bom&lt;/artifactId&gt;
+			&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; 
+			&lt;type&gt;pom&lt;/type&gt;
 			&lt;scope&gt;import&lt;/scope&gt;
-        &lt;/dependency&gt;
+		&lt;/dependency&gt;
     &lt;/dependencies&gt;
 &lt;/dependencyManagement&gt;
 </code></pre>
@@ -166,7 +169,10 @@
 <p>当然也可以使用继承的方式：</p>
 
 <pre><code>&lt;parent&gt; 
-	&lt;groupId&gt;io.spring.platform&lt;/groupId&gt; 			&lt;artifactId&gt;platform-bom&lt;/artifactId&gt; 			&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; &lt;relativePath/&gt;
+	&lt;groupId&gt;io.spring.platform&lt;/groupId&gt;
+	&lt;artifactId&gt;platform-bom&lt;/artifactId&gt;
+	&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; 
+	&lt;relativePath/&gt;
 &lt;/parent&gt;
 </code></pre>
 
