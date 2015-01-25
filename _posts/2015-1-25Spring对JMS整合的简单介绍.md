@@ -1,4 +1,6 @@
-#### JMS
+---
+layout: post
+title: Spring对JMS整合的简单介绍
 
 ---
 
