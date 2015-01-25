@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Spring对JMS整合的简单介绍
+title: spring对JMS整合的简单介绍
 
 ---
 
@@ -122,24 +122,3 @@ spring提倡基于POJO的低侵入编程，所以这里在实现监听器的时�
 	</jms:listener-container>	
 
 这样在消息达到后系统就会自动帮你执行jmsReceiveMessage 的getStudent方法。
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
