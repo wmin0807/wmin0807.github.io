@@ -1,0 +1,41 @@
+<blockquote>
+  <p>在使用Git的时候需要维护一个自己的分支模型，推荐使用: 
+http://nvie.com/posts/a-successful-git-branching-model/  </p>
+</blockquote>
+
+<h4 id="section">总体说来有一下两点：</h4>
+
+<ul>
+  <li>在中央仓库保存两个永久分支，master &amp;&amp; develop，master分支是发布分支，每次发布就是从master上打包发布，程序是不允许直接在master提交代码，只能通过其他分支合并到master分支。develop分支是开发分支，当develop上得源代码达到一个稳定状态的时候就可以把develop的代码合并到master上。</li>
+  <li>除去master和develop这两个永久分支，还存在一些暂时的分支。
+    <ul>
+      <li>线上的紧急Bug需要修复，这个时候就需要创建一个hotfix分支，这个分支是从master上检出，完成修复后双向合并到master和develop上，保证develop与master代码的同步，合并完后删除hotfix 分支。</li>
+      <li>还比如，要开发一个新功能，这个时候需要创建一个feature分支，这个分支就从develop上检出，可以把这个分支推到服务器上让更多地人参与开发，当然也可以不推倒服务器上，只在本地开发，开发完成后合并到develop上。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>下面这个是我们项目中的网络提交图：</p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/5568742/5021605/91bdfa3e-6b12-11e4-8b66-3926fb2c0a29.png" alt="test2" /></p>
+
+<blockquote>
+  <p>这只是简单介说了一下分支模型，具体的介绍可以参考上面给出的链接。如果在提交的过程中直接在master上做了修改，或者不小心把master合并到了develop分支上，如何回退？</p>
+</blockquote>
+
+<h4 id="master">直接在master分支上修改代码并提交如何回退</h4>
+
+<blockquote>
+  <p>如果直接在master分支上做了修改并提交到了服务器，这种操作在上面所描述的分支模型中是严格禁止的，如果出现这种情况如何回退：</p>
+</blockquote>
+
+<blockquote>
+  <ul>
+    <li>在本地切到master分支下，使用 git chenkout -b  temp-branch，这样就从master分支上创建了一个新的临时分支，并且切到这个分支下。</li>
+    <li>git reset –hard commitpoint, 这个commitpoint代表你要回滚的提交点</li>
+    <li>git branch -D master , 这个操作是删除本地master分支</li>
+    <li>git push origin :master, 删除远程服务器上得master分支，这里的删除就是推送一个空分支到远程master上。<b>但是注意的是远程master可能是一个default设置，这样服务器是不允许删除master分支，这个时候就需要在项目设置上将default标签切换到另一个分支上，上面的删除操作才能成功</b></li>
+    <li>将远程分支删掉后需要把回滚后的分支推到远程服务器上，git push origin temp-branch:master，这样就能完成回退操作</li>
+    <li>最后是删除temp-branch 分支，git checkout master, git branch -D temp-branch.</li>
+  </ul>
+</blockquote>

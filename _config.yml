@@ -12,13 +12,12 @@ defaults:
     scope:
       path: "" # empty string for all files
     values:
-      title: wangmin's blog
+      title: Blog
 
 description: Stylish Jekyll Theme
 author:
   name: wangmin
   email: w0807m@163.com
-  github: wmin0807
   twitter: dbtek
   pinterest: asd123
   linkedin: asd123
