@@ -7,6 +7,87 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java中遍历Map的各种方式</title>
+				<description>&lt;p&gt;在遍历Map集合之前首先先定义一个Map对象：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Map&amp;lt;String, String&amp;gt; map = new LinkedHashMap&amp;lt;String, String&amp;gt;();
+map.put(&quot;1&quot;, &quot;one&quot;);
+map.put(&quot;2&quot;, &quot;two&quot;);
+map.put(&quot;3&quot;, &quot;three&quot;);
+map.put(&quot;4&quot;, &quot;fore&quot;);
+map.put(&quot;5&quot;, &quot;five&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个地方使用的是LinkedHashMap，主要是为了确保让map中的元素是按照插入的顺序存放的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 使用keySet()方法遍历&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用keyset方法遍历，是先取出map的key组成的Set集合，通过对Set集合的遍历，然后使用map.get(key)方法取出value值。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;for (String key : map.keySet()) {
+	System.out.println(key + &quot; : &quot; + map.get(key));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;2. 使用map的values()方法遍历集合的values&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;map.values()返回的是由map的值组成的Collection，这个方法只能遍历map的所有value，不能得到map的key。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;for (String value : map.values()) {
+	System.out.println(value);
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;3. 使用map的entrySet()方法遍历&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用map的entrySet()方法返回一个以Entry为元素的Set集合，然后对Set集合进行遍历。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;for (Entry&amp;lt;String, String&amp;gt; entry : map.entrySet()) {
+	System.out.println(entry.getKey() + &quot; : &quot; + 	entry.getValue());
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;4. 通过keySet()返回的集合的iterator遍历&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;由于map.keySet()返回的是一个Set集合，所以通过它的iterator()方法返回一个迭代器，通过迭代器遍历map。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;String&amp;gt; it = map.keySet().iterator();
+while(it1.hasNext()) {
+	String key = it1.next();
+	System.out.println(key + &quot; : &quot; + map.get(key));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;5. 通过values()返回的Collection的iterator遍历&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;map.values()方法返回的是一个Collection&lt;string&gt;对象，这个集合对象可以使用iterator方法访问。&lt;/string&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;String&amp;gt; it = map.values().iterator();
+while(it1.hasNext()) {
+	String key = it1.next();
+	System.out.println(key + &quot; : &quot; + map.get(key));
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;6. 通过entrySet()返回的Set的iterator遍历&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;同上，map.entrySet()方法返回的是一个Set&amp;lt;Entry&amp;lt;String, String»类型的集合，可以使用iterator来访问该集合。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;Entry&amp;lt;String, String&amp;gt;&amp;gt; it = 	map.entrySet().iterator();
+while(it3.hasNext()) {
+	Entry&amp;lt;String, String&amp;gt; entry = it3.next();
+	System.out.println(entry.getKey() + &quot; : &quot; + 	entry.getValue());
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上总结了对map集合的集中遍历方式，根据自身需要灵活选择使用哪种方式。&lt;/p&gt;
+</description>
+				<pubDate>Sun, 14 Jun 2015 00:00:00 +0800</pubDate>
+				<link>/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</link>
+				<guid isPermaLink="true">/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</guid>
+			</item>
+		
+			<item>
 				<title>spring io 平台介绍</title>
 				<description>&lt;p&gt;Spring IO Platform reference对Spring IO的介绍如下：&lt;/p&gt;
 
