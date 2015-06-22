@@ -1,0 +1,108 @@
+<p><strong>Apache Spark is a fast and general-purpose cluster computing system.</strong></p>
+
+<ol>
+  <li>
+    <p>spark 提供了 Java  Scala Python and 的API。
+在examples/src/main目录下有Java和Scala例子， 用 bin/run-example 运行。</p>
+  </li>
+  <li>
+    <p>通过运行： ./bin/spark-shell –master local[2] 来进行交互式的操作，这是学习sprak最好的方式</p>
+  </li>
+  <li>
+    <p>从1.4起spark也提供了R的api，./bin/sparkR –master local[2]</p>
+  </li>
+</ol>
+
+<p><strong>Quick Start</strong></p>
+
+<ol>
+  <li>
+    <p>spark 提供了Scala 和 Python的交互式分析shell来学习api
+./bin/spark-shell</p>
+  </li>
+  <li>
+    <p>RDD是分布式弹性数据集，可以理解为就是一个分布式的集合，这个集合的创建可以通过Hadoop 的 InputFormats，或者通过其他RDD转换而来。</p>
+  </li>
+  <li>
+    <p>RDD有动作，他能够返回值，以及转换操作，他会返回一个指针指向新的RDD，通过RDD的filter操作返回一个新的RDD.</p>
+  </li>
+  <li>
+    <p>RDD有很复杂的操作，他可以直接调用Scala Java的库方法，使用的时候需要使用：import java.lang.Math来引入。</p>
+  </li>
+</ol>
+
+<p><strong>Caching</strong></p>
+
+<ol>
+  <li>spark 支持推送一个数据集到一个集群的缓存中，尤其是那种需要经常重复读取的数据。eg: linesWithSpark.cache()</li>
+</ol>
+
+<p><strong>Self-contained Applications（独立的应用程序）</strong></p>
+
+<ul>
+  <li>创建Maven项目。</li>
+  <li>pom.xml 文件如下：</li>
+</ul>
+
+<hr />
+
+<pre><code>&lt;dependencies&gt;
+   &lt;dependency&gt;
+      &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+      &lt;artifactId&gt;spark-core_2.10&lt;/artifactId&gt;
+      &lt;version&gt;1.4.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;junit&lt;/groupId&gt;
+      &lt;artifactId&gt;junit&lt;/artifactId&gt;
+      &lt;version&gt;4.11&lt;/version&gt;
+      &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+</code></pre>
+
+<ul>
+  <li>创建一个简单的spark程序：</li>
+</ul>
+
+<hr />
+
+<pre><code>public class SimpleApp {
+	public static void main(String[] args) {
+		// 文件路径
+		String logFile = "/home/wm/apps/spark-1.4.0-bin-hadoop2.6/README.md";
+		SparkConf conf = new SparkConf().setAppName("Simple Application");
+		JavaSparkContext sc = new JavaSparkContext(conf);
+		JavaRDD&lt;String&gt; logData = sc.textFile(logFile).cache();
+		@SuppressWarnings("serial")
+		long numAs = logData.filter(new Function&lt;String, Boolean&gt;() {
+			public Boolean call(String s) throws Exception {
+				return s.contains("a");
+			}
+			
+		}).count();
+		@SuppressWarnings("serial")
+		long numBs = logData.filter(new Function&lt;String, Boolean&gt;() {
+
+			public Boolean call(String s) throws Exception {
+				return s.contains("b");
+			}
+			
+		}).count();
+		System.out.println("Lines with a: " + numAs + ", lines with b: " + numBs);
+		sc.close();
+	}
+}
+</code></pre>
+
+<ul>
+  <li>mvn pckage</li>
+  <li>将target目录下的sparkdemo2-0.0.1-SNAPSHOT.jar文件放在spark的安装目录下。</li>
+  <li>在spark安装目录下执行jar包中的程序，但是要指定执行的class文件，这个class文件需要全路径。例如：</li>
+</ul>
+
+<hr />
+
+<pre><code>./bin/spark-submit --class "com.wm.test.sparkdemo" --master local[4] sparkdemo-0.0.1-SNAPSHOT.jar
+</code></pre>
+
