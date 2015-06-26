@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>ssh_exchange_identification</title>
+	<title>Linux一些常用的命令</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -117,7 +117,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>ssh_exchange_identification </h1>
+  <h1>Linux一些常用的命令 </h1>
 </div>
 	
 <article>
@@ -126,28 +126,54 @@
 	 <span class="post-date">
 	   
 	   June 
-	   23rd,
-	     
+	   26th,
+	   
 	   2015
 	 </span>
 	  <div class="article_body">
-	  <p>在使用ssh user@ip连接远程主机的时候出现这个问题：</p>
+	  <h4 id="section">查看内存的使用情况</h4>
 
-<pre><code>ssh_exchange_identification: Connection closed by remote host 
+<pre><code>free  [-m/-g] 使用free -g 可以以G为单位显示当前系统内存的使用状况。
 </code></pre>
 
-<p>针对这个问题做一下简单的总结：</p>
+<h4 id="cpumemswap-">查看 CPU/Mem/Swap 的使用情况</h4>
 
-<ol>
-  <li>首先可以使用telent yourhost 22查看一下端口是否能通。</li>
-  <li>首先怀疑是该机器out of memory，因为ssh 到一台机器的时候，这台机器会fork进程来完成这个操作，如果是系统的进程数太多超过限制，或者内存不足无法满足fork子进程操作所需要的资源，操作系统会主动断开链接。如果需要更多的信息可以使用ssh -v …进行链接操作查看更多的错误信息。</li>
-  <li>
-    <p>有可能是yourhost 机器下的/etc/hosts.allow文件不允许你的ip地址进行ssh登录。这个时候需要修改这个文件，具体的修改可以参考这个链接地址：</p>
+<pre><code>top -M
+</code></pre>
 
-    <p><strong>http://www.rjkfw.com/s_596.html</strong></p>
-  </li>
-</ol>
+<h4 id="section-1">查看磁盘的使用情况以及文件系统被挂载的位置</h4>
 
+<pre><code>df -lh, 也可以使用 fdisk -l 来查看详细的磁盘分区情况
+</code></pre>
+
+<h4 id="section-2">解压文件到指定的路径</h4>
+
+<pre><code>tar -xzvf ....tar.gz -C 解压文件存放的位置
+</code></pre>
+
+<h4 id="scp">scp命令拷贝文件</h4>
+
+<pre><code>在linux下一般用scp这个命令来通过ssh传输文件。
+
+1、从服务器上下载文件
+scp username@servername:/path/filename /var/www/local_dir（本地目录）
+
+ 例如scp root@192.168.0.101:/var/www/test.txt  把192.168.0.101上的/var/www/test.txt 的文件下载到/var/www/local_dir（本地目录）
+
+2、上传本地文件到服务器
+scp /path/filename username@servername:/path   
+
+例如scp /var/www/test.php  root@192.168.0.101:/var/www/  把本机/var/www/目录下的test.php文件上传到192.168.0.101这台服务器上的/var/www/目录中
+
+3、从服务器下载整个目录
+scp -r username@servername:/var/www/remote_dir/（远程目录） /var/www/local_dir（本地目录）
+
+例如:scp -r root@192.168.0.101:/var/www/test  /var/www/  
+
+4、上传目录到服务器
+scp  -r local_dir username@servername:remote_dir
+例如：scp -r test  root@192.168.0.101:/var/www/   把当前目录下的test目录上传到服务器的/var/www/ 目录
+</code></pre>
 
 	  </div>
 
@@ -160,7 +186,7 @@
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=ssh_exchange_identification&via=dbtek"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Linux一些常用的命令&via=dbtek"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -188,10 +214,10 @@
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2015/06/22/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html" title="Spark学习笔记2">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2015/06/23/Ssh_exchange_identification.html" title="ssh_exchange_identification">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html" title="Linux一些常用的命令">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 

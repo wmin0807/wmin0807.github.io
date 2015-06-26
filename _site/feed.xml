@@ -7,6 +7,57 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Linux一些常用的命令</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;查看内存的使用情况&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;free  [-m/-g] 使用free -g 可以以G为单位显示当前系统内存的使用状况。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;cpumemswap-&quot;&gt;查看 CPU/Mem/Swap 的使用情况&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;top -M
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;查看磁盘的使用情况以及文件系统被挂载的位置&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;df -lh, 也可以使用 fdisk -l 来查看详细的磁盘分区情况
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;解压文件到指定的路径&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;tar -xzvf ....tar.gz -C 解压文件存放的位置
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;scp&quot;&gt;scp命令拷贝文件&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code&gt;在linux下一般用scp这个命令来通过ssh传输文件。
+
+1、从服务器上下载文件
+scp username@servername:/path/filename /var/www/local_dir（本地目录）
+
+ 例如scp root@192.168.0.101:/var/www/test.txt  把192.168.0.101上的/var/www/test.txt 的文件下载到/var/www/local_dir（本地目录）
+
+2、上传本地文件到服务器
+scp /path/filename username@servername:/path   
+
+例如scp /var/www/test.php  root@192.168.0.101:/var/www/  把本机/var/www/目录下的test.php文件上传到192.168.0.101这台服务器上的/var/www/目录中
+
+3、从服务器下载整个目录
+scp -r username@servername:/var/www/remote_dir/（远程目录） /var/www/local_dir（本地目录）
+
+例如:scp -r root@192.168.0.101:/var/www/test  /var/www/  
+
+4、上传目录到服务器
+scp  -r local_dir username@servername:remote_dir
+例如：scp -r test  root@192.168.0.101:/var/www/   把当前目录下的test目录上传到服务器的/var/www/ 目录
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+				<pubDate>Fri, 26 Jun 2015 00:00:00 +0800</pubDate>
+				<link>/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</link>
+				<guid isPermaLink="true">/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</guid>
+			</item>
+		
+			<item>
 				<title>ssh_exchange_identification</title>
 				<description>&lt;p&gt;在使用ssh user@ip连接远程主机的时候出现这个问题：&lt;/p&gt;
 
