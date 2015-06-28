@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Linux一些常用的命令</title>
+	<title>Spark学习笔记3</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -117,7 +117,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Linux一些常用的命令 </h1>
+  <h1>Spark学习笔记3 </h1>
 </div>
 	
 <article>
@@ -126,54 +126,150 @@
 	 <span class="post-date">
 	   
 	   June 
-	   26th,
+	   28th,
 	   
 	   2015
 	 </span>
 	  <div class="article_body">
-	  <h4 id="section">查看内存的使用情况</h4>
+	  <h4 id="hdfsmysql">读取HDFS中的数据，并简单分析，最后结果写入mysql数据库中。</h4>
 
-<pre><code>free  [-m/-g] 使用free -g 可以以G为单位显示当前系统内存的使用状况。
+<p><strong>首先建立工程，pom文件中引入以下几个依赖，</strong></p>
+
+<pre><code>&lt;dependency&gt; &lt;!-- Spark dependency --&gt;
+	&lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+	&lt;artifactId&gt;spark-core_2.10&lt;/artifactId&gt;
+	&lt;version&gt;1.4.0&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;mysql&lt;/groupId&gt;
+	&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+	&lt;version&gt;5.1.13&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;
+	&lt;artifactId&gt;hadoop-client&lt;/artifactId&gt;
+	&lt;version&gt;2.6.0&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+	&lt;groupId&gt;junit&lt;/groupId&gt;
+	&lt;artifactId&gt;junit&lt;/artifactId&gt;
+	&lt;version&gt;4.11&lt;/version&gt;
+	&lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
 </code></pre>
 
-<h4 id="cpumemswap-">查看 CPU/Mem/Swap 的使用情况</h4>
+<p>首先需要引入spark的包，这里使用的是spark1.4的包。由于需要读取HDFS中的数据，所以需要hadoop-client文件，这个Hadoop的环境是2.6.0的环境。最后需要把结果写入mysql中，需要mysql的驱动文件，所以需要加入mysql的依赖，最后加入单元测试的包。</p>
 
-<pre><code>top -M
+<p><strong>创建文件ReadHDFSErrorToMysql.java</strong></p>
+
+<ul>
+  <li>在main函数中首先创建JavaSparkcontext对象。</li>
+</ul>
+
+<hr />
+
+<pre><code>SparkConf conf = new SparkConf().setAppName("FindError");
+JavaSparkContext sc = new JavaSparkContext(conf);
 </code></pre>
 
-<h4 id="section-1">查看磁盘的使用情况以及文件系统被挂载的位置</h4>
+<ul>
+  <li>找到指定目录下的所有文件路径，因为只有找到这个路径才能加载相应的文件。</li>
+</ul>
 
-<pre><code>df -lh, 也可以使用 fdisk -l 来查看详细的磁盘分区情况
+<hr />
+
+<pre><code>/**
+ * 
+ * 列出指定目录中的文件，这里的文件是不包括子目录的。
+ * @param pathOfDirectory
+ * 	目录路径
+ * @return
+ * @throws IOException 
+ */
+public static String[] findFilePathFromDir(String dst) throws IOException {
+	Set&lt;String&gt; filePathSet = new HashSet&lt;String&gt;();
+	String[] result = null;
+	Configuration conf = new Configuration();
+	FileSystem fs = FileSystem.get(URI.create(dst), conf);
+	FileStatus fileList[] = fs.listStatus(new Path(dst));
+	int size = fileList.length;
+	for (int i = 0; i &lt; size; i++) {
+		filePathSet.add(fileList[i].getPath().toString());
+	}
+	if (filePathSet.size() &gt; 0) {
+		result = new String[filePathSet.size()];
+		int i = 0;
+		for (String str : filePathSet) {
+			result[i++] = str;
+		}
+	}
+	fs.close();
+	return result;
+}
 </code></pre>
 
-<h4 id="section-2">解压文件到指定的路径</h4>
+<ul>
+  <li>依次遍历文件路径并为每个文件创建一个新的RDD然后计算出这个文件中包涵ERROR字符串的行数。</li>
+</ul>
 
-<pre><code>tar -xzvf ....tar.gz -C 解压文件存放的位置
+<hr />
+
+<pre><code>Map&lt;String, Long&gt; result = new HashMap&lt;String, Long&gt;();
+if (filePaths != null) {
+	for (String path : filePaths) {
+		result.put(path, sc.textFile(path).filter(new Function&lt;String, Boolean&gt;() {
+
+			public Boolean call(String line) throws Exception {
+				return line.contains("ERROR");
+			}
+			
+		}).count());
+	}
+}
 </code></pre>
 
-<h4 id="scp">scp命令拷贝文件</h4>
+<ul>
+  <li>将results中的数据写入mysql中</li>
+</ul>
 
-<pre><code>在linux下一般用scp这个命令来通过ssh传输文件。
+<hr />
 
-1、从服务器上下载文件
-scp username@servername:/path/filename /var/www/local_dir（本地目录）
-
- 例如scp root@192.168.0.101:/var/www/test.txt  把192.168.0.101上的/var/www/test.txt 的文件下载到/var/www/local_dir（本地目录）
-
-2、上传本地文件到服务器
-scp /path/filename username@servername:/path   
-
-例如scp /var/www/test.php  root@192.168.0.101:/var/www/  把本机/var/www/目录下的test.php文件上传到192.168.0.101这台服务器上的/var/www/目录中
-
-3、从服务器下载整个目录
-scp -r username@servername:/var/www/remote_dir/（远程目录） /var/www/local_dir（本地目录）
-
-例如:scp -r root@192.168.0.101:/var/www/test  /var/www/  
-
-4、上传目录到服务器
-scp  -r local_dir username@servername:remote_dir
-例如：scp -r test  root@192.168.0.101:/var/www/   把当前目录下的test目录上传到服务器的/var/www/ 目录
+<pre><code>/**
+ * 将结果写入mysql中
+ * @param result
+ * @throws Exception 
+ */
+public static void wirteResultToMysql(Map&lt;String, Long&gt; result) throws Exception {
+    String DBDRIVER = "com.mysql.jdbc.Driver";  
+    //连接地址是由各个数据库生产商单独提供的，所以需要单独记住  
+    String DBURL = "jdbc:mysql://ip:3306/test";  
+    //连接数据库的用户名  
+    String DBUSER = "root";  
+    //连接数据库的密码  
+    String DBPASS = "root";
+    Connection con = null; //表示数据库的连接对象  
+    PreparedStatement pstmt = null; //表示数据库更新操作  
+    String sql = "insert into aaa values(?,?)";  
+    Class.forName(DBDRIVER); //1、使用CLASS 类加载驱动程序  
+    con = DriverManager.getConnection(DBURL,DBUSER,DBPASS); //2、连接数据库  
+    pstmt = con.prepareStatement(sql); //使用预处理的方式创建对象  
+    if (result != null) {
+    	for (String str : result.keySet()) {
+    		pstmt.setString(1, str);
+    		pstmt.setLong(2, result.get(str));
+    		pstmt.addBatch();
+    	}
+    }
+    //pstmt.executeUpdate(); //执行SQL 语句，更新数据库  
+    pstmt.executeBatch();
+    pstmt.close();  
+    con.close(); // 4、关闭数据库  
+}
 </code></pre>
+
+<h4 id="section">总结一下：</h4>
+
+<p>虽然整个过程比较简单，但通过实际的编码可以更加熟悉spark的api和功能。</p>
 
 	  </div>
 
@@ -186,7 +282,7 @@ scp  -r local_dir username@servername:remote_dir
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Linux一些常用的命令&via=dbtek"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Spark学习笔记3&via=dbtek"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -214,10 +310,10 @@ scp  -r local_dir username@servername:remote_dir
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2015/06/23/Ssh_exchange_identification.html" title="ssh_exchange_identification">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html" title="Linux一些常用的命令">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html" title="Spark学习笔记3">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 

@@ -7,6 +7,153 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Spark学习笔记3</title>
+				<description>&lt;h4 id=&quot;hdfsmysql&quot;&gt;读取HDFS中的数据，并简单分析，最后结果写入mysql数据库中。&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;首先建立工程，pom文件中引入以下几个依赖，&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt; &amp;lt;!-- Spark dependency --&amp;gt;
+	&amp;lt;groupId&amp;gt;org.apache.spark&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;spark-core_2.10&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+	&amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;5.1.13&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+	&amp;lt;groupId&amp;gt;org.apache.hadoop&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;hadoop-client&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;2.6.0&amp;lt;/version&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&amp;lt;dependency&amp;gt;
+	&amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
+	&amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
+	&amp;lt;version&amp;gt;4.11&amp;lt;/version&amp;gt;
+	&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+&amp;lt;/dependency&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;首先需要引入spark的包，这里使用的是spark1.4的包。由于需要读取HDFS中的数据，所以需要hadoop-client文件，这个Hadoop的环境是2.6.0的环境。最后需要把结果写入mysql中，需要mysql的驱动文件，所以需要加入mysql的依赖，最后加入单元测试的包。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;创建文件ReadHDFSErrorToMysql.java&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在main函数中首先创建JavaSparkcontext对象。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;SparkConf conf = new SparkConf().setAppName(&quot;FindError&quot;);
+JavaSparkContext sc = new JavaSparkContext(conf);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;找到指定目录下的所有文件路径，因为只有找到这个路径才能加载相应的文件。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * 
+ * 列出指定目录中的文件，这里的文件是不包括子目录的。
+ * @param pathOfDirectory
+ * 	目录路径
+ * @return
+ * @throws IOException 
+ */
+public static String[] findFilePathFromDir(String dst) throws IOException {
+	Set&amp;lt;String&amp;gt; filePathSet = new HashSet&amp;lt;String&amp;gt;();
+	String[] result = null;
+	Configuration conf = new Configuration();
+	FileSystem fs = FileSystem.get(URI.create(dst), conf);
+	FileStatus fileList[] = fs.listStatus(new Path(dst));
+	int size = fileList.length;
+	for (int i = 0; i &amp;lt; size; i++) {
+		filePathSet.add(fileList[i].getPath().toString());
+	}
+	if (filePathSet.size() &amp;gt; 0) {
+		result = new String[filePathSet.size()];
+		int i = 0;
+		for (String str : filePathSet) {
+			result[i++] = str;
+		}
+	}
+	fs.close();
+	return result;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;依次遍历文件路径并为每个文件创建一个新的RDD然后计算出这个文件中包涵ERROR字符串的行数。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;Map&amp;lt;String, Long&amp;gt; result = new HashMap&amp;lt;String, Long&amp;gt;();
+if (filePaths != null) {
+	for (String path : filePaths) {
+		result.put(path, sc.textFile(path).filter(new Function&amp;lt;String, Boolean&amp;gt;() {
+
+			public Boolean call(String line) throws Exception {
+				return line.contains(&quot;ERROR&quot;);
+			}
+			
+		}).count());
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;将results中的数据写入mysql中&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * 将结果写入mysql中
+ * @param result
+ * @throws Exception 
+ */
+public static void wirteResultToMysql(Map&amp;lt;String, Long&amp;gt; result) throws Exception {
+    String DBDRIVER = &quot;com.mysql.jdbc.Driver&quot;;  
+    //连接地址是由各个数据库生产商单独提供的，所以需要单独记住  
+    String DBURL = &quot;jdbc:mysql://ip:3306/test&quot;;  
+    //连接数据库的用户名  
+    String DBUSER = &quot;root&quot;;  
+    //连接数据库的密码  
+    String DBPASS = &quot;root&quot;;
+    Connection con = null; //表示数据库的连接对象  
+    PreparedStatement pstmt = null; //表示数据库更新操作  
+    String sql = &quot;insert into aaa values(?,?)&quot;;  
+    Class.forName(DBDRIVER); //1、使用CLASS 类加载驱动程序  
+    con = DriverManager.getConnection(DBURL,DBUSER,DBPASS); //2、连接数据库  
+    pstmt = con.prepareStatement(sql); //使用预处理的方式创建对象  
+    if (result != null) {
+    	for (String str : result.keySet()) {
+    		pstmt.setString(1, str);
+    		pstmt.setLong(2, result.get(str));
+    		pstmt.addBatch();
+    	}
+    }
+    //pstmt.executeUpdate(); //执行SQL 语句，更新数据库  
+    pstmt.executeBatch();
+    pstmt.close();  
+    con.close(); // 4、关闭数据库  
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;section&quot;&gt;总结一下：&lt;/h4&gt;
+
+&lt;p&gt;虽然整个过程比较简单，但通过实际的编码可以更加熟悉spark的api和功能。&lt;/p&gt;
+</description>
+				<pubDate>Sun, 28 Jun 2015 00:00:00 +0800</pubDate>
+				<link>/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</link>
+				<guid isPermaLink="true">/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</guid>
+			</item>
+		
+			<item>
 				<title>Linux一些常用的命令</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;查看内存的使用情况&lt;/h4&gt;
 
@@ -830,55 +977,6 @@ github的地址： https://github.com/vedmack/feedback_me&lt;/p&gt;
 				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
 				<link>/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</link>
 				<guid isPermaLink="true">/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</guid>
-			</item>
-		
-			<item>
-				<title>Git提交错误后如何回退</title>
-				<description>&lt;blockquote&gt;
-  &lt;p&gt;在使用Git的时候需要维护一个自己的分支模型，推荐使用: 
-http://nvie.com/posts/a-successful-git-branching-model/  &lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;section&quot;&gt;总体说来有一下两点：&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;在中央仓库保存两个永久分支，master &amp;amp;&amp;amp; develop，master分支是发布分支，每次发布就是从master上打包发布，程序是不允许直接在master提交代码，只能通过其他分支合并到master分支。develop分支是开发分支，当develop上得源代码达到一个稳定状态的时候就可以把develop的代码合并到master上。&lt;/li&gt;
-  &lt;li&gt;除去master和develop这两个永久分支，还存在一些暂时的分支。
-    &lt;ul&gt;
-      &lt;li&gt;线上的紧急Bug需要修复，这个时候就需要创建一个hotfix分支，这个分支是从master上检出，完成修复后双向合并到master和develop上，保证develop与master代码的同步，合并完后删除hotfix 分支。&lt;/li&gt;
-      &lt;li&gt;还比如，要开发一个新功能，这个时候需要创建一个feature分支，这个分支就从develop上检出，可以把这个分支推到服务器上让更多地人参与开发，当然也可以不推倒服务器上，只在本地开发，开发完成后合并到develop上。&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;下面这个是我们项目中的网络提交图：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5021605/91bdfa3e-6b12-11e4-8b66-3926fb2c0a29.png&quot; alt=&quot;test2&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;这只是简单介说了一下分支模型，具体的介绍可以参考上面给出的链接。如果在提交的过程中直接在master上做了修改，或者不小心把master合并到了develop分支上，如何回退？&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;master&quot;&gt;直接在master分支上修改代码并提交如何回退&lt;/h4&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;如果直接在master分支上做了修改并提交到了服务器，这种操作在上面所描述的分支模型中是严格禁止的，如果出现这种情况如何回退：&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;ul&gt;
-    &lt;li&gt;在本地切到master分支下，使用 git chenkout -b  temp-branch，这样就从master分支上创建了一个新的临时分支，并且切到这个分支下。&lt;/li&gt;
-    &lt;li&gt;git reset –hard commitpoint, 这个commitpoint代表你要回滚的提交点&lt;/li&gt;
-    &lt;li&gt;git branch -D master , 这个操作是删除本地master分支&lt;/li&gt;
-    &lt;li&gt;git push origin :master, 删除远程服务器上得master分支，这里的删除就是推送一个空分支到远程master上。&lt;b&gt;但是注意的是远程master可能是一个default设置，这样服务器是不允许删除master分支，这个时候就需要在项目设置上将default标签切换到另一个分支上，上面的删除操作才能成功&lt;/b&gt;&lt;/li&gt;
-    &lt;li&gt;将远程分支删掉后需要把回滚后的分支推到远程服务器上，git push origin temp-branch:master，这样就能完成回退操作&lt;/li&gt;
-    &lt;li&gt;最后是删除temp-branch 分支，git checkout master, git branch -D temp-branch.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-</description>
-				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
-				<link>/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html</link>
-				<guid isPermaLink="true">/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html</guid>
 			</item>
 		
 	</channel>
