@@ -7,6 +7,176 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Spark学习笔记4</title>
+				<description>&lt;h4 id=&quot;standalone&quot;&gt;任务的提交以及Standalone集群模式的部署&lt;/h4&gt;
+
+&lt;h4 id=&quot;spark-submit&quot;&gt;spark-submit&lt;/h4&gt;
+
+&lt;p&gt;首先需要打包代码，如果你的代码需要依赖其他的包环境则需要单独的打包这些依赖，应为cluster会将所有依赖的jar包分发到各个节点上进行使用。推荐的方法是将依赖包和程序都统一的打成一个包，这样就可以直接使用spark-submit方法来运行，具体的pom.xml配置如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;dependencies&amp;gt;
+	&amp;lt;dependency&amp;gt; &amp;lt;!-- Spark dependency --&amp;gt;
+		&amp;lt;groupId&amp;gt;org.apache.spark&amp;lt;/groupId&amp;gt;
+		&amp;lt;artifactId&amp;gt;spark-core_2.10&amp;lt;/artifactId&amp;gt;
+		&amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt;
+		&amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt;
+	&amp;lt;/dependency&amp;gt;
+	&amp;lt;dependency&amp;gt;
+		&amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt;
+		&amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt;
+		&amp;lt;version&amp;gt;5.1.13&amp;lt;/version&amp;gt;
+	&amp;lt;/dependency&amp;gt;
+	&amp;lt;dependency&amp;gt;
+		&amp;lt;groupId&amp;gt;org.apache.hadoop&amp;lt;/groupId&amp;gt;
+		&amp;lt;artifactId&amp;gt;hadoop-client&amp;lt;/artifactId&amp;gt;
+		&amp;lt;version&amp;gt;2.6.0&amp;lt;/version&amp;gt;
+		&amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt;
+	&amp;lt;/dependency&amp;gt;
+	&amp;lt;dependency&amp;gt;
+		&amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
+		&amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
+		&amp;lt;version&amp;gt;4.11&amp;lt;/version&amp;gt;
+		&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
+	&amp;lt;/dependency&amp;gt;
+&amp;lt;/dependencies&amp;gt;
+&amp;lt;build&amp;gt;
+	&amp;lt;plugins&amp;gt;
+		&amp;lt;plugin&amp;gt;
+			&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
+			&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
+			&amp;lt;version&amp;gt;2.3.2&amp;lt;/version&amp;gt;
+			&amp;lt;configuration&amp;gt;
+				&amp;lt;!-- 使用1.7 jdk进行编译 --&amp;gt;
+				&amp;lt;source&amp;gt;1.7&amp;lt;/source&amp;gt;
+				&amp;lt;target&amp;gt;1.7&amp;lt;/target&amp;gt;
+			&amp;lt;/configuration&amp;gt;
+		&amp;lt;/plugin&amp;gt;
+		&amp;lt;plugin&amp;gt;
+			&amp;lt;artifactId&amp;gt;maven-assembly-plugin&amp;lt;/artifactId&amp;gt;
+			&amp;lt;version&amp;gt;2.5.5&amp;lt;/version&amp;gt;
+			&amp;lt;configuration&amp;gt;
+				&amp;lt;descriptorRefs&amp;gt;
+					&amp;lt;descriptorRef&amp;gt;jar-with-dependencies&amp;lt;/descriptorRef&amp;gt;
+				&amp;lt;/descriptorRefs&amp;gt;
+			&amp;lt;/configuration&amp;gt;
+			&amp;lt;executions&amp;gt;
+				&amp;lt;execution&amp;gt;
+					&amp;lt;id&amp;gt;make-assembly&amp;lt;/id&amp;gt;
+					&amp;lt;phase&amp;gt;package&amp;lt;/phase&amp;gt;
+					&amp;lt;goals&amp;gt;
+						&amp;lt;goal&amp;gt;single&amp;lt;/goal&amp;gt;
+					&amp;lt;/goals&amp;gt;
+				&amp;lt;/execution&amp;gt;
+			&amp;lt;/executions&amp;gt;
+		&amp;lt;/plugin&amp;gt;
+	&amp;lt;/plugins&amp;gt;
+&amp;lt;/build&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;spark &amp;amp;&amp;amp; hadoop 的scope值都设置为provided，然后打包的过程是把需要依赖的第三方东西打成一个统一的jar包去运行，使用的是maven-compiler-plugin插件。&lt;/p&gt;
+
+&lt;p&gt;在服务器上提交的命令如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./bin/spark-submit \
+  --class &amp;lt;main-class&amp;gt;
+  --master &amp;lt;master-url&amp;gt; \
+  --deploy-mode &amp;lt;deploy-mode&amp;gt; \
+  --conf &amp;lt;key&amp;gt;=&amp;lt;value&amp;gt; \
+  ... # other options
+  &amp;lt;application-jar&amp;gt; \
+  [application-arguments]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;spark-submit 可以加载一个配置文件，默认是加载在conf/spark-defaults.conf&lt;/p&gt;
+
+&lt;h4 id=&quot;spark-standalone-mode&quot;&gt;Spark Standalone Mode&lt;/h4&gt;
+
+&lt;p&gt;除了运行在Mesos和YARN集群之外，spark也提供了简单的独立部署模式。可以通过手动的启动master和worker，也可以通过spark提供的启动脚本来启动。独立部署也可以通过运行在一个机器上，进行测试。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;为了安装你需要放置一个编译好的spark版本到每个机器上。&lt;/li&gt;
+  &lt;li&gt;启动集群有两种方式，一种是手动启动，另一种是通过启动脚本启动。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;手动启动spark集群&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;启动一个独立的master可以使用如下的命令：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./sbin/start-master.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;一旦启动可以通过访问：http://localhost:8080端口访问master，打出的spark://HOST:PORT 的URL，work节点可以使用这个链接连到master上。&lt;/p&gt;
+
+&lt;p&gt;可以使用如下的命令来使worker节点连接到master上&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;./sbin/start-slave.sh &amp;lt;worker#&amp;gt; &amp;lt;master-spark-URL&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;worker在加入到master后可以访问master的http://localhost:8080，可以清洗的看到被加入的worker节点的信息。&lt;/p&gt;
+
+&lt;p&gt;在启动master和worker的时候可以带上参数进行设置，参数的列表如下:其中比较重要的是：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;-c CORES， 这个是指定多少个cpu分配给spark使用，默认是全部cpu&lt;/li&gt;
+  &lt;li&gt;-m MEM，这个是指定多少的内存分配给spark使用，默认是全部的内存的减去1g的操作系统内存全部分配给spark使用。一般的格式是1000M or 2G&lt;/li&gt;
+  &lt;li&gt;-d DIR, 这个指定spark任务的日志输出目录。&lt;/li&gt;
+  &lt;li&gt;–properties-file FILE 指定spark指定加载的配置文件的路径默认是： conf/spark-defaults.conf&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;脚本方式部署&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;通过spark的部署脚本部署首先需要在spark的主目录下创建一个conf/slaves的文件，这个文件中每一行代表一个worker的hostname.需要注意的是，master访问worker节点是通过SSH访问的，所以需要master通过ssh无密码的登录到worker，否则需要设置一个 SPARK_SSH_FOREGROUND的环境变量，这个变量的值就是每个worker的密码&lt;/p&gt;
+
+&lt;p&gt;然后可以通过spark安装目录下的sbin/….sh文件进行启动，
+如果要启动和停止master和slave可以使用：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;sbin/start-all.sh&lt;/li&gt;
+  &lt;li&gt;sbin/stop-all.sh&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;注意的是这些脚本必须是在master机器上执行&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;同时你可以通过配置集群的 conf/spark-env.sh文件来进一步配置集群的环境。但是这也文件需要通过拷贝conf/spark-env.sh.template文件来创建，并且需要把这个文件拷贝到所有的worker节点上。&lt;/p&gt;
+
+&lt;p&gt;其中： SPARK_MASTER_OPTS &amp;amp;&amp;amp; SPARK_WORKER_OPTS 两个配置项比较复杂。&lt;/p&gt;
+
+&lt;p&gt;通过在SparkContext构造器中传入spark://IP:PORT这个来启用这个集群。同时可以在交互式的方式启动脚本中使用：./bin/spark-shell –master spark://IP:PORT 来启动集群执行。&lt;/p&gt;
+
+&lt;p&gt;独立部署模式的集群现在只是简单的支持FIFO调度。
+为了允许多个并发用户，可以通过SparkConf设置每个应用程序需要的资源的最大数。默认情况下，它会请求使用集群的全部的核，而这只是同时运行一个应用程序才回有意义。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;val conf = new SparkConf()
+             .setMaster(...)
+             .setAppName(...)
+             .set(&quot;spark.cores.max&quot;, &quot;10&quot;)
+val sc = new SparkContext(conf)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;除了可以在程序中指定你也可以在spark-env.sh中设置默认的值，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export SPARK_MASTER_OPTS=&quot;-Dspark.deploy.defaultCores=&amp;lt;value&amp;gt;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;spark的高可用设置&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;spark的高可用设置有两种，一种是通过Zookeeper来实现，另一种是通过本地文件系统来实现。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;使用ZooKeeper备份master，利用zookeeper提供的领导选举和状态保存，你可以让更多的master连接到zookeepre实例。一个将会被选举为leader其他的则会保存备份他的状态。如果master死掉，zookeeper可以选举一个新的leader，整个过程需要1到2分钟的时间，但是这个过程只会对新的任务调度有影响。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有三个配置信息：spark.deploy.recoveryMode/spark.deploy.zookeeper.url/spark.deploy.zookeeper.dir&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;使用本地文件系统来恢复该节点。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有两个配置信息：spark.deploy.recoveryMode、spark.deploy.recoveryDirectory&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</description>
+				<pubDate>Mon, 29 Jun 2015 00:00:00 +0800</pubDate>
+				<link>/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</link>
+				<guid isPermaLink="true">/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</guid>
+			</item>
+		
+			<item>
 				<title>Spark学习笔记3</title>
 				<description>&lt;h4 id=&quot;hdfsmysql&quot;&gt;读取HDFS中的数据，并简单分析，最后结果写入mysql数据库中。&lt;/h4&gt;
 
@@ -905,78 +1075,6 @@ while(it3.hasNext()) {
 				<pubDate>Fri, 16 Jan 2015 00:00:00 +0800</pubDate>
 				<link>/2015/01/16/spring_io_platform.html</link>
 				<guid isPermaLink="true">/2015/01/16/spring_io_platform.html</guid>
-			</item>
-		
-			<item>
-				<title>feedback_me 插件的使用</title>
-				<description>&lt;p&gt;This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;feedback_me 在使用后的效果如下：&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5056362/a681f7e6-6cba-11e4-9eb2-bdcb2bf2d18d.png&quot; alt=&quot;1&quot; /&gt;
-&lt;img src=&quot;https://cloud.githubusercontent.com/assets/5568742/5056363/c164806a-6cba-11e4-9f83-f38c9e18653a.png&quot; alt=&quot;2&quot; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;它会附着在窗口的一边，点击后会出现信息表，填写完成后点击提交即可，提交完成后feedbach_me 会将填写的信息通过post请求发送到你指定的url地址，你可以在后台写一个controller专门负责接收这个请求。这个插件的好处在于整个过程使用简单、有效，只需要通过简单的配置就能完成。&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;官方的文档的地址： http://plugins.jquery.com/feedback_me 
-github的地址： https://github.com/vedmack/feedback_me&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h5 id=&quot;section&quot;&gt;看一下如何使用它：&lt;/h5&gt;
-
-&lt;p&gt;首先他是一个jQuery 插件，需要在一开始引入jQuery，然后引入它指定的js和css文件即可。&lt;/p&gt;
-
-&lt;p&gt;上图例子实现的代码：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;link href=&quot;../../styles/jquery/jquery.feedback_me.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot;&amp;gt;
-&amp;lt;script type=&quot;text/javascript&quot; src=&quot;../../scripts/jquery/jquery.min.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
-&amp;lt;script type=&quot;text/javascript&quot; src=&quot;../../scripts/jquery/plugin/jquery.feedback_me.js&quot;&amp;gt;&amp;lt;/script&amp;gt;
-&amp;lt;script type=&quot;text/javascript&quot;&amp;gt;
-	$(document).ready(function(){
-		fm_options = {
-			// 这个参数是设置这个反馈按钮在页面的哪个位置，left-bottom ...
-    		position: &quot;right-top&quot;,
-    		// 是否显示邮箱
-    		show_email: true,
-    		email_label: &quot;邮箱&quot;,
-    		email_required: true,
-    		// 单选框
-   			show_radio_button_list: true,
-   			radio_button_list_labels: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;],
-   			radio_button_list_title: &quot;给个好评哦...&quot;,
-   			radio_button_list_required: false,
-   			//
-   			name_required: true,
-    		name_label: &quot;名字&quot;,
-			// 
-			message_label: &quot;反馈信息&quot;,
-			message_required: true,
-    		show_asterisk_for_required: true,
-    		// 这个很重要，这是提交后信息发送到哪里
-    		feedback_url: &quot;http://.../feedback/message&quot;,
-    		// 提交信息后提示
-    		delayed_options: {
-        		send_fail : &quot;提交失败 :(. &quot;,
-       			 send_success : &quot;提交成功，谢谢参与反馈，^_^ !&quot;
-    		},
-    		submit_label: &quot;提交&quot;,
-			// 页面按钮提示信息
-			trigger_label: &quot;意见反馈&quot;
-		};
-		//init feedback_me plugin
-		fm.init(fm_options);
-	});
-&amp;lt;/script&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-				<pubDate>Mon, 05 Jan 2015 00:00:00 +0800</pubDate>
-				<link>/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</link>
-				<guid isPermaLink="true">/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html</guid>
 			</item>
 		
 	</channel>

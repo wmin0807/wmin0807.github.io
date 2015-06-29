@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Spark学习笔记4</title>
+	
+	<meta name="author" content="wangmin">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy coding
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Spark学习笔记4 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   June 
+	   29th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="standalone">任务的提交以及Standalone集群模式的部署</h4>
+
+<h4 id="spark-submit">spark-submit</h4>
+
+<p>首先需要打包代码，如果你的代码需要依赖其他的包环境则需要单独的打包这些依赖，应为cluster会将所有依赖的jar包分发到各个节点上进行使用。推荐的方法是将依赖包和程序都统一的打成一个包，这样就可以直接使用spark-submit方法来运行，具体的pom.xml配置如下：</p>
+
+<pre><code>&lt;dependencies&gt;
+	&lt;dependency&gt; &lt;!-- Spark dependency --&gt;
+		&lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+		&lt;artifactId&gt;spark-core_2.10&lt;/artifactId&gt;
+		&lt;version&gt;1.4.0&lt;/version&gt;
+		&lt;scope&gt;provided&lt;/scope&gt;
+	&lt;/dependency&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;mysql&lt;/groupId&gt;
+		&lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;
+		&lt;version&gt;5.1.13&lt;/version&gt;
+	&lt;/dependency&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;org.apache.hadoop&lt;/groupId&gt;
+		&lt;artifactId&gt;hadoop-client&lt;/artifactId&gt;
+		&lt;version&gt;2.6.0&lt;/version&gt;
+		&lt;scope&gt;provided&lt;/scope&gt;
+	&lt;/dependency&gt;
+	&lt;dependency&gt;
+		&lt;groupId&gt;junit&lt;/groupId&gt;
+		&lt;artifactId&gt;junit&lt;/artifactId&gt;
+		&lt;version&gt;4.11&lt;/version&gt;
+		&lt;scope&gt;test&lt;/scope&gt;
+	&lt;/dependency&gt;
+&lt;/dependencies&gt;
+&lt;build&gt;
+	&lt;plugins&gt;
+		&lt;plugin&gt;
+			&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+			&lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+			&lt;version&gt;2.3.2&lt;/version&gt;
+			&lt;configuration&gt;
+				&lt;!-- 使用1.7 jdk进行编译 --&gt;
+				&lt;source&gt;1.7&lt;/source&gt;
+				&lt;target&gt;1.7&lt;/target&gt;
+			&lt;/configuration&gt;
+		&lt;/plugin&gt;
+		&lt;plugin&gt;
+			&lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
+			&lt;version&gt;2.5.5&lt;/version&gt;
+			&lt;configuration&gt;
+				&lt;descriptorRefs&gt;
+					&lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
+				&lt;/descriptorRefs&gt;
+			&lt;/configuration&gt;
+			&lt;executions&gt;
+				&lt;execution&gt;
+					&lt;id&gt;make-assembly&lt;/id&gt;
+					&lt;phase&gt;package&lt;/phase&gt;
+					&lt;goals&gt;
+						&lt;goal&gt;single&lt;/goal&gt;
+					&lt;/goals&gt;
+				&lt;/execution&gt;
+			&lt;/executions&gt;
+		&lt;/plugin&gt;
+	&lt;/plugins&gt;
+&lt;/build&gt;
+</code></pre>
+
+<p>spark &amp;&amp; hadoop 的scope值都设置为provided，然后打包的过程是把需要依赖的第三方东西打成一个统一的jar包去运行，使用的是maven-compiler-plugin插件。</p>
+
+<p>在服务器上提交的命令如下：</p>
+
+<pre><code>./bin/spark-submit \
+  --class &lt;main-class&gt;
+  --master &lt;master-url&gt; \
+  --deploy-mode &lt;deploy-mode&gt; \
+  --conf &lt;key&gt;=&lt;value&gt; \
+  ... # other options
+  &lt;application-jar&gt; \
+  [application-arguments]
+</code></pre>
+
+<p>spark-submit 可以加载一个配置文件，默认是加载在conf/spark-defaults.conf</p>
+
+<h4 id="spark-standalone-mode">Spark Standalone Mode</h4>
+
+<p>除了运行在Mesos和YARN集群之外，spark也提供了简单的独立部署模式。可以通过手动的启动master和worker，也可以通过spark提供的启动脚本来启动。独立部署也可以通过运行在一个机器上，进行测试。</p>
+
+<ul>
+  <li>为了安装你需要放置一个编译好的spark版本到每个机器上。</li>
+  <li>启动集群有两种方式，一种是手动启动，另一种是通过启动脚本启动。</li>
+</ul>
+
+<p><strong>手动启动spark集群</strong></p>
+
+<p>启动一个独立的master可以使用如下的命令：</p>
+
+<pre><code>./sbin/start-master.sh
+</code></pre>
+
+<p>一旦启动可以通过访问：http://localhost:8080端口访问master，打出的spark://HOST:PORT 的URL，work节点可以使用这个链接连到master上。</p>
+
+<p>可以使用如下的命令来使worker节点连接到master上</p>
+
+<pre><code>./sbin/start-slave.sh &lt;worker#&gt; &lt;master-spark-URL&gt;
+</code></pre>
+
+<p>worker在加入到master后可以访问master的http://localhost:8080，可以清洗的看到被加入的worker节点的信息。</p>
+
+<p>在启动master和worker的时候可以带上参数进行设置，参数的列表如下:其中比较重要的是：</p>
+
+<ul>
+  <li>-c CORES， 这个是指定多少个cpu分配给spark使用，默认是全部cpu</li>
+  <li>-m MEM，这个是指定多少的内存分配给spark使用，默认是全部的内存的减去1g的操作系统内存全部分配给spark使用。一般的格式是1000M or 2G</li>
+  <li>-d DIR, 这个指定spark任务的日志输出目录。</li>
+  <li>–properties-file FILE 指定spark指定加载的配置文件的路径默认是： conf/spark-defaults.conf</li>
+</ul>
+
+<p><strong>脚本方式部署</strong></p>
+
+<p>通过spark的部署脚本部署首先需要在spark的主目录下创建一个conf/slaves的文件，这个文件中每一行代表一个worker的hostname.需要注意的是，master访问worker节点是通过SSH访问的，所以需要master通过ssh无密码的登录到worker，否则需要设置一个 SPARK_SSH_FOREGROUND的环境变量，这个变量的值就是每个worker的密码</p>
+
+<p>然后可以通过spark安装目录下的sbin/….sh文件进行启动，
+如果要启动和停止master和slave可以使用：</p>
+
+<ul>
+  <li>sbin/start-all.sh</li>
+  <li>sbin/stop-all.sh</li>
+</ul>
+
+<p><strong>注意的是这些脚本必须是在master机器上执行</strong></p>
+
+<p>同时你可以通过配置集群的 conf/spark-env.sh文件来进一步配置集群的环境。但是这也文件需要通过拷贝conf/spark-env.sh.template文件来创建，并且需要把这个文件拷贝到所有的worker节点上。</p>
+
+<p>其中： SPARK_MASTER_OPTS &amp;&amp; SPARK_WORKER_OPTS 两个配置项比较复杂。</p>
+
+<p>通过在SparkContext构造器中传入spark://IP:PORT这个来启用这个集群。同时可以在交互式的方式启动脚本中使用：./bin/spark-shell –master spark://IP:PORT 来启动集群执行。</p>
+
+<p>独立部署模式的集群现在只是简单的支持FIFO调度。
+为了允许多个并发用户，可以通过SparkConf设置每个应用程序需要的资源的最大数。默认情况下，它会请求使用集群的全部的核，而这只是同时运行一个应用程序才回有意义。</p>
+
+<pre><code>val conf = new SparkConf()
+             .setMaster(...)
+             .setAppName(...)
+             .set("spark.cores.max", "10")
+val sc = new SparkContext(conf)
+</code></pre>
+
+<p>除了可以在程序中指定你也可以在spark-env.sh中设置默认的值，</p>
+
+<pre><code>export SPARK_MASTER_OPTS="-Dspark.deploy.defaultCores=&lt;value&gt;"
+</code></pre>
+
+<p><strong>spark的高可用设置</strong></p>
+
+<p>spark的高可用设置有两种，一种是通过Zookeeper来实现，另一种是通过本地文件系统来实现。</p>
+
+<ol>
+  <li>
+    <p>使用ZooKeeper备份master，利用zookeeper提供的领导选举和状态保存，你可以让更多的master连接到zookeepre实例。一个将会被选举为leader其他的则会保存备份他的状态。如果master死掉，zookeeper可以选举一个新的leader，整个过程需要1到2分钟的时间，但是这个过程只会对新的任务调度有影响。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有三个配置信息：spark.deploy.recoveryMode/spark.deploy.zookeeper.url/spark.deploy.zookeeper.dir</p>
+  </li>
+  <li>
+    <p>使用本地文件系统来恢复该节点。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有两个配置信息：spark.deploy.recoveryMode、spark.deploy.recoveryDirectory</p>
+  </li>
+</ol>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Spark学习笔记4&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html" title="Spark学习笔记3">&larr; Previous</a></li>
+		  
+		  
+			<li class="next disabled"><a>Next &rarr;</a>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
