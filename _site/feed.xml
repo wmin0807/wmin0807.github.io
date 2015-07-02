@@ -7,6 +7,97 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记1</title>
+				<description>&lt;h4 id=&quot;tostring----equals-&quot;&gt;toString / == / equals 的使用&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;toString的使用&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Person p = new Person();
+System.out.println(p);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;运行上面的程序得到的结果是：Person@f72645&lt;/p&gt;
+
+&lt;p&gt;其实输出这个结果就是调用了对象的toString()方法，也就是其结果和调用：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;System.out.println(p.toString())
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;toString是一个自我描述的方法，一般都是在直接打印该对象的时候，输出该对象的描述信息。要实现这个自我描述方法，需要自己重写toString方法。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Person {
+	private String name;
+	private double weight;
+	....
+	publci String toString() {
+		return &quot;name: &quot; + name + &quot;, weight: &quot; + weight;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;上面的Person类就是重写了toString方法，在打印该对象的时候，就是打印：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;name: xxxx, weight: xxx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;equlas方法和==的区别&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;判断两个对象是否相等可以使用equals方法，另一种是使用==判断。&lt;/p&gt;
+
+&lt;p&gt;使用 == 判断两个对象是否相等的条件是：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;如果两个对象都是基本类型，那么他们的值相等就返回true&lt;/li&gt;
+  &lt;li&gt;如果非基本类型，则说明他们的引用需要指向同一个对象，这个时候才返回true.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;int i = 100;
+float f = 100.0f;
+i == f 返回true
+
+String str1 = new String(&quot;hello&quot;);
+String str2 = new String(&quot;hello&quot;);
+str1 == str2 这个将输出false
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;而equlas是Object提供的一个方法，使用这个方法来判断两个对象是否相等，和使用 == 来判断是一样的效果，但是equlas方法是可以被子自定义的类重写的。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Person {
+
+	...
+	
+	public boolean equlas(Object obj) {
+		... 
+		return true;
+	}
+} 在使用equlas比较的时候就会调用自定义的equlas方法，提供一个标准的equlas方法重写的模板：
+
+public boolean equlas(Object obj) {
+
+	if (this == obj) {
+		return true;
+	}
+	if (obj != null  &amp;amp;&amp;amp; obj.getClass() == Person.class) {
+		Person pobj = (Person)obj;
+		if (...) {
+			return true;
+		}
+	}
+	return false;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Object 默认提供的equlas只是比较对象的地址，即Object类的equlas方法比较的结果与 == 运算符比较的结果是完全相同。因此，在实际运用中需要重写equals，这时候可以根据自己的条件来决定如何判断相等。&lt;/p&gt;
+
+</description>
+				<pubDate>Thu, 02 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/02/Java%E7%AC%94%E8%AE%B01.html</link>
+				<guid isPermaLink="true">/2015/07/02/Java%E7%AC%94%E8%AE%B01.html</guid>
+			</item>
+		
+			<item>
 				<title>Spark学习笔记4</title>
 				<description>&lt;h4 id=&quot;standalone&quot;&gt;任务的提交以及Standalone集群模式的部署&lt;/h4&gt;
 
@@ -1028,53 +1119,6 @@ while(it3.hasNext()) {
 				<pubDate>Sun, 14 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</link>
 				<guid isPermaLink="true">/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</guid>
-			</item>
-		
-			<item>
-				<title>spring io 平台介绍</title>
-				<description>&lt;p&gt;Spring IO Platform reference对Spring IO的介绍如下：&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Spring IO Platform is primarily intended to be used with a dependency management system. It works well with both Maven and Gradle.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;具体如何理解Spring IO Platform 的作用了？&lt;/p&gt;
-
-&lt;p&gt;以前在升级Spring项目的时候是手动的一个一个升级Spring模块的版本，并且一个模块与另一个模块之间的依赖适不适合你并不知道，你还需要测试或者找资料，所以比较麻烦。Spring IO Platform它能够结合Maven (或Gradle)管理每个模块的依赖，使得开发者不再花心思研究各个Java库相互依赖的版本，只需要引入Spring IO Platform即可，因为这些库的依赖关系Spring IO Platform已经帮你验证过了。&lt;/p&gt;
-
-&lt;p&gt;在Maven中的使用也比较简单，只需要在pom.xml文件中加入依赖管理就可：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;dependencyManagement&amp;gt;
-	&amp;lt;dependencies&amp;gt;
-		&amp;lt;dependency&amp;gt; 
-			&amp;lt;groupId&amp;gt;io.spring.platform&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;platform-bom&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;1.1.2.BUILD-SNAPSHOT&amp;lt;/version&amp;gt; 
-			&amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;
-			&amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;
-		&amp;lt;/dependency&amp;gt;
-    &amp;lt;/dependencies&amp;gt;
-&amp;lt;/dependencyManagement&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;当然也可以使用继承的方式：
-	&lt;parent&gt; 
-		&lt;groupid&gt;io.spring.platform&lt;/groupid&gt;
-		&lt;artifactid&gt;platform-bom&lt;/artifactid&gt;
-		&lt;version&gt;1.1.2.BUILD-SNAPSHOT&lt;/version&gt; 
-		&lt;relativepath&gt;&lt;/relativepath&gt;
-	&lt;/parent&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;参考：&lt;/p&gt;
-
-&lt;p&gt;http://docs.spring.io/platform/docs/1.1.2.BUILD-SNAPSHOT/reference/htmlsingle/&lt;/p&gt;
-
-</description>
-				<pubDate>Fri, 16 Jan 2015 00:00:00 +0800</pubDate>
-				<link>/2015/01/16/spring_io_platform.html</link>
-				<guid isPermaLink="true">/2015/01/16/spring_io_platform.html</guid>
 			</item>
 		
 	</channel>
