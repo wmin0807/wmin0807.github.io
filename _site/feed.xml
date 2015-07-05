@@ -7,6 +7,175 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记2</title>
+				<description>&lt;h4 id=&quot;singleton-----&quot;&gt;Singleton / 不可变类 / 缓存不可变类 的实现&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Singleton（单例类）&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;单例类用的地方很多，如果一个类始终只能创建一个实例，则这个类被称为单例类。&lt;/p&gt;
+
+&lt;p&gt;以下程序是创建一个单例类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class SingletonTest {
+	public static void main(String[] args) {
+		Singleton s1 = Singleton.getInstance();
+		Singleton s2 = Singleton.getInstance();
+		System.out.println(s1 == s2);
+		s1.setName(&quot;Singleton1&quot;);
+		System.out.println(&quot;s1 = &quot; + s1.getName());
+		System.out.println(&quot;s2 = &quot; + s2.getName());
+		s2.setName(&quot;Singleton2&quot;);
+		System.out.println(&quot;s1 = &quot; + s1.getName());
+		System.out.println(&quot;s2 = &quot; + s2.getName());
+	}
+}
+class Singleton {
+	private String name;
+	private static Singleton singleton = new Singleton(&quot;default&quot;);
+	private Singleton(String name) {
+		this.name = name;
+	}
+	public static Singleton getInstance() {
+		return singleton;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return this.name;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;不可变类&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;不可变类就是在创建该类的实例后不能更改该类的属性。Java提供的8个包装类和java.lang.String都是不可变类。&lt;/p&gt;
+
+&lt;p&gt;创建不可变类的几个规则：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用private 和 final 修饰符修饰属性；&lt;/li&gt;
+  &lt;li&gt;提供带参数的构建起，用于初始化属性值；&lt;/li&gt;
+  &lt;li&gt;只提供getter方法；&lt;/li&gt;
+  &lt;li&gt;重写hashCode 和 equlas方法；&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * Person 类是一个不可变类
+ * @author wangmin
+ *
+ */
+public class Person {
+	private final String name;
+	private final int age;
+	public Person() {
+		this.name = &quot;&quot;;
+		this.age = 0;
+	}
+	public Person(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	public String getName() {
+		return this.name;
+	}
+	public int getAge() {
+		return this.age;
+	}
+	public boolean equlas (Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj != null &amp;amp;&amp;amp; obj.getClass() == this.getClass()) {
+			Person p = (Person)obj;
+			if (this.getName().equals(p.getName()) &amp;amp;&amp;amp; this.age == p.getAge()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public int hasCode() {
+		return name.hashCode() + age;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;缓存不可变类&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;如果程序经常需要使用相同的不可变类实例，则应该考虑缓存这种不可变类。下面是简单的使用数组的方式实现一个不可变类。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;/**
+ * 使用数组的方式来缓解Person
+ * 1. 定义数组大小，并且使用private static 修饰
+ * 2. 定义valueOf方法获取对象，但是其中存在以下几种情况：
+ * 	2.1 循环遍历整个缓存数组的大小，然后比较，如果已经被缓存则直接取出。（注意数组元素可能为null）
+ *  2.2 由2.1的结果可知，如果数组中没有则新创建。
+ *  2.3 首次判断pos是否已满，如果已满则将新的对象创建到数组0的位置，并且将pos设置为0，并返回。
+ *  2.4 如果没有满则根据pos的位置创建，并返回。
+ * @author wangmin
+ *
+ */
+public class CachePerson {
+	private static int MAX_SIZE = 10;
+	private static CachePerson[] cp = new CachePerson[MAX_SIZE];
+	private String name;
+	private static int pos = 0;
+	
+	public CachePerson() {
+		
+	}
+	public CachePerson(String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return this.name;
+	}
+	public static CachePerson valueOf(String name) {
+		for (int i = 0; i &amp;lt; MAX_SIZE; i++) {
+			if (cp[i] != null &amp;amp;&amp;amp; cp[i].getName().equals(name)) {
+				return cp[i];
+			}
+		}
+		if (pos == MAX_SIZE) {
+			cp[0] = new CachePerson(name);
+			pos = 1;
+		} else {
+			cp[pos++] = new CachePerson(name);
+		}
+		return cp[pos-1];
+	}
+	public boolean equlas (Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj != null &amp;amp;&amp;amp; obj.getClass() == this.getClass()) {
+			CachePerson cp = (CachePerson)obj;
+			if (cp.getName().equals(this.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public int hasCode() {
+		return name.hashCode();
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+				<pubDate>Sun, 05 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/05/Java%E7%AC%94%E8%AE%B02.html</link>
+				<guid isPermaLink="true">/2015/07/05/Java%E7%AC%94%E8%AE%B02.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记1</title>
 				<description>&lt;h4 id=&quot;tostring----equals-&quot;&gt;toString / == / equals 的使用&lt;/h4&gt;
 
@@ -1038,87 +1207,6 @@ sbin/stop-all.sh 结束所有的进程
 				<pubDate>Tue, 16 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/16/Hadoop%E7%9A%84%E5%8D%95%E6%9C%BA%E5%92%8C%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2.html</link>
 				<guid isPermaLink="true">/2015/06/16/Hadoop%E7%9A%84%E5%8D%95%E6%9C%BA%E5%92%8C%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2.html</guid>
-			</item>
-		
-			<item>
-				<title>Java中遍历Map的各种方式</title>
-				<description>&lt;p&gt;在遍历Map集合之前首先先定义一个Map对象：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Map&amp;lt;String, String&amp;gt; map = new LinkedHashMap&amp;lt;String, String&amp;gt;();
-map.put(&quot;1&quot;, &quot;one&quot;);
-map.put(&quot;2&quot;, &quot;two&quot;);
-map.put(&quot;3&quot;, &quot;three&quot;);
-map.put(&quot;4&quot;, &quot;fore&quot;);
-map.put(&quot;5&quot;, &quot;five&quot;);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;这个地方使用的是LinkedHashMap，主要是为了确保让map中的元素是按照插入的顺序存放的。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;1. 使用keySet()方法遍历&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;使用keyset方法遍历，是先取出map的key组成的Set集合，通过对Set集合的遍历，然后使用map.get(key)方法取出value值。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;for (String key : map.keySet()) {
-	System.out.println(key + &quot; : &quot; + map.get(key));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;2. 使用map的values()方法遍历集合的values&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;map.values()返回的是由map的值组成的Collection，这个方法只能遍历map的所有value，不能得到map的key。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;for (String value : map.values()) {
-	System.out.println(value);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;3. 使用map的entrySet()方法遍历&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;使用map的entrySet()方法返回一个以Entry为元素的Set集合，然后对Set集合进行遍历。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;for (Entry&amp;lt;String, String&amp;gt; entry : map.entrySet()) {
-	System.out.println(entry.getKey() + &quot; : &quot; + 	entry.getValue());
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;4. 通过keySet()返回的集合的iterator遍历&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;由于map.keySet()返回的是一个Set集合，所以通过它的iterator()方法返回一个迭代器，通过迭代器遍历map。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;String&amp;gt; it = map.keySet().iterator();
-while(it1.hasNext()) {
-	String key = it1.next();
-	System.out.println(key + &quot; : &quot; + map.get(key));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;5. 通过values()返回的Collection的iterator遍历&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;map.values()方法返回的是一个Collection&lt;string&gt;对象，这个集合对象可以使用iterator方法访问。&lt;/string&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;String&amp;gt; it = map.values().iterator();
-while(it1.hasNext()) {
-	String key = it1.next();
-	System.out.println(key + &quot; : &quot; + map.get(key));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;6. 通过entrySet()返回的Set的iterator遍历&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;同上，map.entrySet()方法返回的是一个Set&amp;lt;Entry&amp;lt;String, String»类型的集合，可以使用iterator来访问该集合。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Iterator&amp;lt;Entry&amp;lt;String, String&amp;gt;&amp;gt; it = 	map.entrySet().iterator();
-while(it3.hasNext()) {
-	Entry&amp;lt;String, String&amp;gt; entry = it3.next();
-	System.out.println(entry.getKey() + &quot; : &quot; + 	entry.getValue());
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;以上总结了对map集合的集中遍历方式，根据自身需要灵活选择使用哪种方式。&lt;/p&gt;
-</description>
-				<pubDate>Sun, 14 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</link>
-				<guid isPermaLink="true">/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html</guid>
 			</item>
 		
 	</channel>
