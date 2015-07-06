@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Blog</title>
+	<title>Java学习笔记3</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -117,172 +117,118 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Blog </h1>
+  <h1>Java学习笔记3 </h1>
 </div>
+	
+<article>
 
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   July 
+	   6th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="string--stringbuffer--stringbuilder---">String / StringBuffer / StringBuilder / 时间 的使用</h4>
 
+<p><strong>String StringBuffer StringBuilder</strong></p>
 
-<article class="home">
+<p>String 类是不可变类，一旦创建以后，包含在这个对象中的字符序列是不可以改变的，直至这个对象被销毁。</p>
 
-  <span class="post-date">
-    
-    June
-    16th,
-    
-    2015
-  </span>
+<p>StringBuffer 和 StringBuilder则是代表一个字符序列可变的类，他们提供了append() insert() reverse() setChartAt() setLength() 方法来改变这个字符序列。</p>
 
-  <h2>
-    <a href="/2015/06/16/Hadoop%E7%9A%84%E5%8D%95%E6%9C%BA%E5%92%8C%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2.html">Hadoop的单机和集群部署</a>
-  </h2>
+<p>StringBuffer 和 StringBuilder两个类的用法基本相似，但是StringBuffer是线程安全的，而StringBuilder则没有实现线程安全的功能。所以StringBuilder的性能要高一些。</p>
 
-  <div>
-    
-    
-    <h4 id="hadoop">hadoop单机部署步骤：</h4>
+<p><strong>Date类</strong></p>
 
+<p>Java 提供Date类来处理日期与时间。由于Date存在的时间比较悠久导致很多构造方法都已经过时，不再推荐使用。</p>
 
-    
-    
-  </div>
+<pre><code>Date()
+Date(long date)
+boolean after(Date when)
+.........before.........
+</code></pre>
 
+<p>由于Date的过时，现在大部分都是使用Calendar工具类。Calendar是一个抽象类，不能直接实例化。但是它提供了几个静态的getInstance()方法来获取Calendar对象。</p>
+
+<p>Calendar 与 Date之间的转换。</p>
+
+<pre><code>Calendar cl = Calendar.getInstance();
+Date date = cl.getTime();
+
+/**
+ * 
+ * Calendar 提供了add、set方法，field的类型有：Calendar.YEAR Calendar.MONTH....
+ * 但是需要注意的是： Calendar.MONTH字段代表的月份，月份的起始值不是1，而是0。
+ * @author wangmin
+ *
+ */
+public class CalendarTest {
+	public static void main(String[] args) {
+		Calendar c = Calendar.getInstance();
+		System.out.println(c.get(Calendar.YEAR));
+		System.out.println(c.get(Calendar.MONDAY));
+		System.out.println(c.get(Calendar.MONTH));
+	}
+}
+</code></pre>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记3&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/07/05/Java%E7%AC%94%E8%AE%B02.html" title="Java学习笔记2">&larr; Previous</a></li>
+		  
+		  
+			<li class="next disabled"><a>Next &rarr;</a>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
 </article>
-
-
-<article class="home">
-
-  <span class="post-date">
-    
-    June
-    14th,
-    
-    2015
-  </span>
-
-  <h2>
-    <a href="/2015/06/14/Java%E4%B8%ADMap%E7%9A%84%E8%AE%BF%E9%97%AE%E6%96%B9%E5%BC%8F.html">Java中遍历Map的各种方式</a>
-  </h2>
-
-  <div>
-    
-    
-    <p>在遍历Map集合之前首先先定义一个Map对象：</p>
-
-
-    
-    
-  </div>
-
-</article>
-
-
-<article class="home">
-
-  <span class="post-date">
-    
-    January
-    16th,
-    
-    2015
-  </span>
-
-  <h2>
-    <a href="/2015/01/16/spring_io_platform.html">spring io 平台介绍</a>
-  </h2>
-
-  <div>
-    
-    
-    <p>Spring IO Platform reference对Spring IO的介绍如下：</p>
-
-
-    
-    
-  </div>
-
-</article>
-
-
-<article class="home">
-
-  <span class="post-date">
-    
-    January
-    5th,
-    
-    2015
-  </span>
-
-  <h2>
-    <a href="/2015/01/05/feedback_me_%E6%8F%92%E4%BB%B6%E7%9A%84%E4%BD%BF%E7%94%A8.html">feedback_me 插件的使用</a>
-  </h2>
-
-  <div>
-    
-    
-    <p>This jQuery plug-in allows user to easily add an animatable UI widget with a feedback form which slides from the side of the screen.</p>
-
-
-    
-    
-  </div>
-
-</article>
-
-
-<article class="home">
-
-  <span class="post-date">
-    
-    January
-    5th,
-    
-    2015
-  </span>
-
-  <h2>
-    <a href="/2015/01/05/Git%E6%8F%90%E4%BA%A4%E9%94%99%E8%AF%AF%E5%90%8E%E5%A6%82%E4%BD%95%E5%9B%9E%E9%80%80.html">Git提交错误后如何回退</a>
-  </h2>
-
-  <div>
-    
-    
-    <blockquote>
-  <p>在使用Git的时候需要维护一个自己的分支模型，推荐使用: 
-http://nvie.com/posts/a-successful-git-branching-model/  </p>
-</blockquote>
-
-
-    
-    
-  </div>
-
-</article>
-
-<hr/>
-
-<ul class="pager"> 
-
-  
-  <li class="previous">
-    
-    <a href="/">&larr; Newer</a>
-    
-  </li>
-  
-  
-  <li>
-    <span class="page_number">Page: 2 of 2</span>
-  </li>
-
-  
-  <li class="next disabled">
-    <a>Older &rarr;</a>        
-  </li>
-  
-
-</ul>
-
+<div class="clearfix"></div>
 
 
 	</div>
