@@ -7,6 +7,57 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>spark-jobserver的安装</title>
+				<description>&lt;h4 id=&quot;spark-jobserver&quot;&gt;spark-jobserver的安装&lt;/h4&gt;
+
+&lt;p&gt;spark-jobserver 提供了一个RESTful接口来提交和管理spark的jobs,jars和job contexts。该工程位于：https://github.com/spark-jobserver/spark-jobserver&lt;/p&gt;
+
+&lt;p&gt;特性：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;针对job 和 contexts的各个方面提供了REST风格的api接口进行管理&lt;/li&gt;
+  &lt;li&gt;支持SparkSQL，Hive，Streaming Contexts/jobs 以及定制job contexts!&lt;/li&gt;
+  &lt;li&gt;支持压秒级别低延迟的任务通过长期运行的job contexts&lt;/li&gt;
+  &lt;li&gt;可以通过结束context来停止运行的作业(job)&lt;/li&gt;
+  &lt;li&gt;分割jar上传步骤以提高job的启动&lt;/li&gt;
+  &lt;li&gt;异步和同步的job API，其中同步API对低延时作业非常有效&lt;/li&gt;
+  &lt;li&gt;支持Standalone Spark和Mesos&lt;/li&gt;
+  &lt;li&gt;Job和jar信息通过一个可插拔的DAO接口来持久化&lt;/li&gt;
+  &lt;li&gt;命名RDD以缓存，并可以通过该名称获取RDD。这样可以提高作业间RDD的共享和重用&lt;/li&gt;
+  &lt;li&gt;支持scala 2.10 和 2.11&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;在生产环境上一般直接部署spark-jobserver，部署的过程可以参考官方文档的Deployment这个章节。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;拷贝spark-jobserver 目录下的conf/local.sh.template文件为local.sh，cp conf/local.sh.template conf/local.sh.&lt;/li&gt;
+  &lt;li&gt;配置conf/local.sh文件，主要是以下三个参数SPARK_VERISON / SPARK_HOME/ DRIVER_MEMORY&lt;/li&gt;
+  &lt;li&gt;然后执行bin/server_deploy.sh config/local开始部署配置环境，这个时候可能会提醒你找不到local.sh文件，你可以根据错误提示信息把local.sh文件拷贝到相应的路径下。&lt;/li&gt;
+  &lt;li&gt;在执行完server_deploy.sh文件后，可以执行server_start.sh文件进行启动jobserver。可能在启动的过程提示log4j找不到，这个时候需要把conf目录下的log4j文件拷贝到指定的位置。同时如果提示：spark-jobserver-master/bin/spark-job-server.jar does not exist，则个时候需要找一下当前路径下的spark-job-server.jar文件在哪个路径下，然后把该文件拷贝到bin目录下。&lt;/li&gt;
+  &lt;li&gt;
+    &lt;table&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;启动没有报错的情况下，可以用ps -ef&lt;/td&gt;
+          &lt;td&gt;grep job来查看一下当前是否存在jobserver的进程。&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+  &lt;li&gt;正确启动后就可以通过浏览器访问该主机的8090端口，例如：192.168.1.100:8090。&lt;/li&gt;
+  &lt;li&gt;可以在该主机上执行：curl –data-binary @job-server-tests/target/job-server-tests-$VER.jar localhost:8090/jars/test，把测试jar包放到jobserver上。&lt;/li&gt;
+  &lt;li&gt;然后可以在Spark上执行任务：curl -d “input.string = a b c a b see” ‘localhost:8090/jobs?appName=test&amp;amp;classPath=spark.jobserver.WordCountExample’&lt;/li&gt;
+  &lt;li&gt;执行完后可以查看执行的结果：curl localhost:8090/jobs/5453779a-f004-45fc-a11d-a39dae0f9bf4&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;jobserver的安装就完成。具体如何让编写的spark应用程序可以被jobserver调用，这需要创建一个jobserver的工程。&lt;/p&gt;
+</description>
+				<pubDate>Tue, 07 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html</link>
+				<guid isPermaLink="true">/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记3</title>
 				<description>&lt;h4 id=&quot;string--stringbuffer--stringbuilder---&quot;&gt;String / StringBuffer / StringBuilder / 时间 的使用&lt;/h4&gt;
 
@@ -900,122 +951,6 @@ public void outOfBounds()
 				<pubDate>Mon, 22 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/22/Junit%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.html</link>
 				<guid isPermaLink="true">/2015/06/22/Junit%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.html</guid>
-			</item>
-		
-			<item>
-				<title>Spark学习笔记1</title>
-				<description>&lt;p&gt;&lt;strong&gt;Apache Spark is a fast and general-purpose cluster computing system.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;spark 提供了 Java  Scala Python and 的API。
-在examples/src/main目录下有Java和Scala例子， 用 bin/run-example 运行。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;通过运行： ./bin/spark-shell –master local[2] 来进行交互式的操作，这是学习sprak最好的方式&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;从1.4起spark也提供了R的api，./bin/sparkR –master local[2]&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Quick Start&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;spark 提供了Scala 和 Python的交互式分析shell来学习api
-./bin/spark-shell&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;RDD是分布式弹性数据集，可以理解为就是一个分布式的集合，这个集合的创建可以通过Hadoop 的 InputFormats，或者通过其他RDD转换而来。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;RDD有动作，他能够返回值，以及转换操作，他会返回一个指针指向新的RDD，通过RDD的filter操作返回一个新的RDD.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;RDD有很复杂的操作，他可以直接调用Scala Java的库方法，使用的时候需要使用：import java.lang.Math来引入。&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Caching&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;spark 支持推送一个数据集到一个集群的缓存中，尤其是那种需要经常重复读取的数据。eg: linesWithSpark.cache()&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Self-contained Applications（独立的应用程序）&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;创建Maven项目。&lt;/li&gt;
-  &lt;li&gt;pom.xml 文件如下：&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;dependencies&amp;gt;
-   &amp;lt;dependency&amp;gt;
-      &amp;lt;groupId&amp;gt;org.apache.spark&amp;lt;/groupId&amp;gt;
-      &amp;lt;artifactId&amp;gt;spark-core_2.10&amp;lt;/artifactId&amp;gt;
-      &amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt;
-    &amp;lt;/dependency&amp;gt;
-    &amp;lt;dependency&amp;gt;
-      &amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
-      &amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
-      &amp;lt;version&amp;gt;4.11&amp;lt;/version&amp;gt;
-      &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
-    &amp;lt;/dependency&amp;gt;
-&amp;lt;/dependencies&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;创建一个简单的spark程序：&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;public class SimpleApp {
-	public static void main(String[] args) {
-		// 文件路径
-		String logFile = &quot;/home/wm/apps/spark-1.4.0-bin-hadoop2.6/README.md&quot;;
-		SparkConf conf = new SparkConf().setAppName(&quot;Simple Application&quot;);
-		JavaSparkContext sc = new JavaSparkContext(conf);
-		JavaRDD&amp;lt;String&amp;gt; logData = sc.textFile(logFile).cache();
-		@SuppressWarnings(&quot;serial&quot;)
-		long numAs = logData.filter(new Function&amp;lt;String, Boolean&amp;gt;() {
-			public Boolean call(String s) throws Exception {
-				return s.contains(&quot;a&quot;);
-			}
-			
-		}).count();
-		@SuppressWarnings(&quot;serial&quot;)
-		long numBs = logData.filter(new Function&amp;lt;String, Boolean&amp;gt;() {
-
-			public Boolean call(String s) throws Exception {
-				return s.contains(&quot;b&quot;);
-			}
-			
-		}).count();
-		System.out.println(&quot;Lines with a: &quot; + numAs + &quot;, lines with b: &quot; + numBs);
-		sc.close();
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;mvn pckage&lt;/li&gt;
-  &lt;li&gt;将target目录下的sparkdemo2-0.0.1-SNAPSHOT.jar文件放在spark的安装目录下。&lt;/li&gt;
-  &lt;li&gt;在spark安装目录下执行jar包中的程序，但是要指定执行的class文件，这个class文件需要全路径。例如：&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;./bin/spark-submit --class &quot;com.wm.test.sparkdemo&quot; --master local[4] sparkdemo-0.0.1-SNAPSHOT.jar
-&lt;/code&gt;&lt;/pre&gt;
-
-</description>
-				<pubDate>Sun, 21 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/21/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01.html</link>
-				<guid isPermaLink="true">/2015/06/21/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01.html</guid>
 			</item>
 		
 	</channel>

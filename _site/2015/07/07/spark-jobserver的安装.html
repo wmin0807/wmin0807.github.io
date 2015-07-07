@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Java学习笔记3</title>
+	<title>spark-jobserver的安装</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -117,7 +117,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Java学习笔记3 </h1>
+  <h1>spark-jobserver的安装 </h1>
 </div>
 	
 <article>
@@ -126,54 +126,54 @@
 	 <span class="post-date">
 	   
 	   July 
-	   6th,
+	   7th,
 	   
 	   2015
 	 </span>
 	  <div class="article_body">
-	  <h4 id="string--stringbuffer--stringbuilder---">String / StringBuffer / StringBuilder / 时间 的使用</h4>
+	  <h4 id="spark-jobserver">spark-jobserver的安装</h4>
 
-<p><strong>String StringBuffer StringBuilder</strong></p>
+<p>spark-jobserver 提供了一个RESTful接口来提交和管理spark的jobs,jars和job contexts。该工程位于：https://github.com/spark-jobserver/spark-jobserver</p>
 
-<p>String 类是不可变类，一旦创建以后，包含在这个对象中的字符序列是不可以改变的，直至这个对象被销毁。</p>
+<p>特性：</p>
 
-<p>StringBuffer 和 StringBuilder则是代表一个字符序列可变的类，他们提供了append() insert() reverse() setChartAt() setLength() 方法来改变这个字符序列。</p>
+<ul>
+  <li>针对job 和 contexts的各个方面提供了REST风格的api接口进行管理</li>
+  <li>支持SparkSQL，Hive，Streaming Contexts/jobs 以及定制job contexts!</li>
+  <li>支持压秒级别低延迟的任务通过长期运行的job contexts</li>
+  <li>可以通过结束context来停止运行的作业(job)</li>
+  <li>分割jar上传步骤以提高job的启动</li>
+  <li>异步和同步的job API，其中同步API对低延时作业非常有效</li>
+  <li>支持Standalone Spark和Mesos</li>
+  <li>Job和jar信息通过一个可插拔的DAO接口来持久化</li>
+  <li>命名RDD以缓存，并可以通过该名称获取RDD。这样可以提高作业间RDD的共享和重用</li>
+  <li>支持scala 2.10 和 2.11</li>
+</ul>
 
-<p>StringBuffer 和 StringBuilder两个类的用法基本相似，但是StringBuffer是线程安全的，而StringBuilder则没有实现线程安全的功能。所以StringBuilder的性能要高一些。</p>
+<p>在生产环境上一般直接部署spark-jobserver，部署的过程可以参考官方文档的Deployment这个章节。</p>
 
-<p><strong>Date类</strong></p>
+<ul>
+  <li>拷贝spark-jobserver 目录下的conf/local.sh.template文件为local.sh，cp conf/local.sh.template conf/local.sh.</li>
+  <li>配置conf/local.sh文件，主要是以下三个参数SPARK_VERISON / SPARK_HOME/ DRIVER_MEMORY</li>
+  <li>然后执行bin/server_deploy.sh config/local开始部署配置环境，这个时候可能会提醒你找不到local.sh文件，你可以根据错误提示信息把local.sh文件拷贝到相应的路径下。</li>
+  <li>在执行完server_deploy.sh文件后，可以执行server_start.sh文件进行启动jobserver。可能在启动的过程提示log4j找不到，这个时候需要把conf目录下的log4j文件拷贝到指定的位置。同时如果提示：spark-jobserver-master/bin/spark-job-server.jar does not exist，则个时候需要找一下当前路径下的spark-job-server.jar文件在哪个路径下，然后把该文件拷贝到bin目录下。</li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>启动没有报错的情况下，可以用ps -ef</td>
+          <td>grep job来查看一下当前是否存在jobserver的进程。</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>正确启动后就可以通过浏览器访问该主机的8090端口，例如：192.168.1.100:8090。</li>
+  <li>可以在该主机上执行：curl –data-binary @job-server-tests/target/job-server-tests-$VER.jar localhost:8090/jars/test，把测试jar包放到jobserver上。</li>
+  <li>然后可以在Spark上执行任务：curl -d “input.string = a b c a b see” ‘localhost:8090/jobs?appName=test&amp;classPath=spark.jobserver.WordCountExample’</li>
+  <li>执行完后可以查看执行的结果：curl localhost:8090/jobs/5453779a-f004-45fc-a11d-a39dae0f9bf4</li>
+</ul>
 
-<p>Java 提供Date类来处理日期与时间。由于Date存在的时间比较悠久导致很多构造方法都已经过时，不再推荐使用。</p>
-
-<pre><code>Date()
-Date(long date)
-boolean after(Date when)
-.........before.........
-</code></pre>
-
-<p>由于Date的过时，现在大部分都是使用Calendar工具类。Calendar是一个抽象类，不能直接实例化。但是它提供了几个静态的getInstance()方法来获取Calendar对象。</p>
-
-<p>Calendar 与 Date之间的转换。</p>
-
-<pre><code>Calendar cl = Calendar.getInstance();
-Date date = cl.getTime();
-
-/**
- * 
- * Calendar 提供了add、set方法，field的类型有：Calendar.YEAR Calendar.MONTH....
- * 但是需要注意的是： Calendar.MONTH字段代表的月份，月份的起始值不是1，而是0。
- * @author wangmin
- *
- */
-public class CalendarTest {
-	public static void main(String[] args) {
-		Calendar c = Calendar.getInstance();
-		System.out.println(c.get(Calendar.YEAR));
-		System.out.println(c.get(Calendar.MONDAY));
-		System.out.println(c.get(Calendar.MONTH));
-	}
-}
-</code></pre>
+<p>jobserver的安装就完成。具体如何让编写的spark应用程序可以被jobserver调用，这需要创建一个jobserver的工程。</p>
 
 	  </div>
 
@@ -186,7 +186,7 @@ public class CalendarTest {
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记3&via=dbtek"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=spark-jobserver的安装&via=dbtek"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -214,10 +214,10 @@ public class CalendarTest {
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2015/07/05/Java%E7%AC%94%E8%AE%B02.html" title="Java学习笔记2">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2015/07/06/Java%E7%AC%94%E8%AE%B03.html" title="Java学习笔记3">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html" title="spark-jobserver的安装">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 
