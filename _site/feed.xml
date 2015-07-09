@@ -7,6 +7,133 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记4</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;集合&lt;/h4&gt;
+
+&lt;p&gt;Java的集合大致可以分成Set List 和 Map三种体系结构。其中Set代表无序不可重复的集合；List代表有序、重复的集合；而Map代表具有映射关系的集合。&lt;/p&gt;
+
+&lt;p&gt;Java的集合类主要由两个接口派生而来：Collection 和 Map，这两个接口是根接口。Set 和 List两个接口派生于Collection接口。根据Set List 和 Map三种类型的特点，可以得出这样的结论：&lt;/p&gt;
+
+&lt;p&gt;如果访问List集合中的元素，可以直接使用元素的索引；如果访问Map集合需要根据key来访问，访问Set集合则只能根据元素本身。使用比较多的是：
+HashSet TreeSet ArrayList ArrayDeque LinkedList HashMap TreeMap&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Set&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Set集合不允许包含相同的元素，如果把两个相同的元素添加到Set集合中，则会添加失败。Set判断两个对象相同不是使用==运算符，而是根据equals方法，也就是说两个对象用equlas方法判断返回true，则可以添加成功。Set的子类包含：HashSet 、 TreeSet 、 EnumSet&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;HashSet&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;HashSet具有以下几个特点：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;不能保证元素的排列顺序，遍历的元素可能与添加的元素顺序可能不一样。&lt;/li&gt;
+  &lt;li&gt;HashSet不是同步的，如果两个以上的线程来修改HashSet则需要手动的保证代码的同步。&lt;/li&gt;
+  &lt;li&gt;集合元素可以为null&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;HashSet中存入一个元素的时候，系统会根据该元素的hashCode()返回的数字决定存储的位置。如果两个元素根据equals方法返回true，但是hashCode不一样，则HashSet同样会将两个对象添加成功。&lt;/p&gt;
+
+&lt;p&gt;因此HashSet判断两个对象是否相等，需要equals返回true，同时hashCode返回的数值也一样。应该在重写equlas方法的时候，应该也需要重写hashCode方法。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;LinkedHashSet&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;LinkedHashSet 是HashSet的子类，它也是根据hashCode值来决定元素的存储位置，但是它不同的是需要使用链表来维护元素的次序。这样使得元素看起来是以插入的顺序保存的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;TreeSet&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;TreeSet是SortedSet接口的实现类，因此它可以确保TreeSet中的元素都是有序的。&lt;/p&gt;
+
+&lt;p&gt;TreeSet集合采用hash算法来决定元素的存储位置，同时TreeSet采用红黑树的数据结构来存储集合元素。TreeSet采用了两种排序方法：自然排序和定制排序。&lt;/p&gt;
+
+&lt;p&gt;自然排序是根据添加到TreeSet中的对象的compareTo(Object obj)来判断。因此在加入到TreeSet中的所有对象都要实现Comparable接口。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class Test implements Comparable {
+	...
+	
+	public int comparaTo(Object obj) {
+	
+		...
+	
+	}
+	...
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个Test对象就可以添加到TreeSet集合中。&lt;/p&gt;
+
+&lt;p&gt;定制排序：&lt;/p&gt;
+
+&lt;p&gt;定制排序是创建TreeSet对象的时候指定比较方法，&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;TreeSet ts = new TreeSet(new Comparator() {
+	
+	public int compare(Object o1, Object o2) {
+		...
+	}
+	
+});
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这样在添加到TreeSet中的对象就不需要自己实现Comparable接口，因为TreeSet已经帮你实现了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;ArrayList Vector&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;ArrayList &amp;amp;&amp;amp; Vector 都是基于数组实现的List类。他们都是内部封装了一个动态可分配的数组，使用initialCapacity参数来设置该数组的长度，当向ArrayList和Vector中添加的元素超过了数组的长度则initialCapacity将会自动增长。&lt;/p&gt;
+
+&lt;p&gt;ArrayList 与 Vector之间的主要区别是：ArrayList是线程不安全的，当多个线程修改同一个ArrayList集合的时候，需要手动的保证线程的安全。Vector是线程安全的。&lt;/p&gt;
+
+&lt;p&gt;在Arrays中提供了asList(….)方法，把指定的数组转成List集合。&lt;strong&gt;但是需要注意的是转成后的List对象是不可以使用add remove等操作的，只能遍历。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;LinkedList&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;LinkedList 是List的一个集合，同时还实现了Deque接口，因此它可以被当成双端队列来使用。自然也可以被当成栈来使用。LinkedList内部使用的是链表的形式来保存集合中的元素。因此随机访问的性能不好，但是插入和删除的性能比较好。&lt;/p&gt;
+
+&lt;p&gt;-Xms 是设置JVM的堆内存初始值大小。
+-Xmx 是设置JVM的堆内存最大大小。&lt;/p&gt;
+
+&lt;p&gt;总结：如果需要随机访问的性能，则考虑使用ArrayList，如果需要插入、删除的性能，则需要考虑使用LinkedList.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Hashtable &amp;amp;&amp;amp; HashMap&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;两者之间的区别：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Hashtable 是一个线程安全的类，HashMap线程不安全。&lt;/li&gt;
+  &lt;li&gt;Hashtable 不允许使用null作为key和value，但是HashMap是可以使用null作为key和value的。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;因此 HashMap中只能有一个key位null，但是可以有无数的value值为null。&lt;/p&gt;
+
+&lt;p&gt;与LinkedHashSet一样，Map中也存在一个LinkedHashMap，用链表来记录map对象的添加顺序。&lt;/p&gt;
+
+&lt;p&gt;SortedMap 与 TreeMap 也是可以排序的：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;自然排序： TreeMap 的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则会抛出异常信息。&lt;/li&gt;
+  &lt;li&gt;定制排序： 创建TreeMap对象的时候，传入一个Comparator对象，该对象负责对TreeMap中所有的key进行排序。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Collections&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Java 为 Set List Map 提供了一个工具类： Collections，它提供了大量方法对集合元素进行排序，查询和修改等操作。还提供了将集合元素对象设置为不可变、对集合对象实现同步的控制方法。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;reverse / shuffle / sort / swap / rotate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Collections 提供了多个synchronizedXxx()方法，将集合包装成线程同步的集合。从而解决多线程并发的问题。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Collection c = Collecionts.synchronizedCollection(new ArrayList());
+List list = Collecionts.synchronizedList(new ArrayList());
+Set set = Collecionts.synchronizedSet(new HashSet());
+Map m = Collecionts.synchronizedMap(new HashMap());
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+				<pubDate>Thu, 09 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/09/Java%E7%AC%94%E8%AE%B04.html</link>
+				<guid isPermaLink="true">/2015/07/09/Java%E7%AC%94%E8%AE%B04.html</guid>
+			</item>
+		
+			<item>
 				<title>spark-jobserver的安装</title>
 				<description>&lt;h4 id=&quot;spark-jobserver&quot;&gt;spark-jobserver的安装&lt;/h4&gt;
 
@@ -857,100 +984,6 @@ JavaSparkContext sc = new JavaSparkContext(conf); ---
 				<pubDate>Mon, 22 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/22/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</link>
 				<guid isPermaLink="true">/2015/06/22/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</guid>
-			</item>
-		
-			<item>
-				<title>Junit使用笔记</title>
-				<description>&lt;p&gt;Junit的所有测试方法都是以@Test修饰，以public void 开头。如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@Test
-public void testAdd() {
-	assertEquals(0, new Calculate().add(0, 1));
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;@BeforeClass &amp;amp;&amp;amp; @AfterClass 都是只会执行一次，@BeforeClass是在类加载的时候执行，@AfterClass 是整个类结束的时候被执行，整个方法是一个静态方法。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@BeforeClass
-public static void setUpBeforeClass() throws Exception {
-	System.out.println(&quot;before class&quot;);
-}
-
-@AfterClass
-public static void tearDownAfterClass() throws Exception {
-	System.out.println(&quot;after class&quot;);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;@Before &amp;amp;&amp;amp; @After两个方法是在每个测试方法执行的执行都会被执行，@Before是在方法执行前执行，@After是在方法执行结束后执行。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@Before
-public void setUp() throws Exception {
-	System.out.println(&quot;before&quot;);
-}
-
-@After
-public void tearDown() throws Exception {
-	System.out.println(&quot;after&quot;);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;@Ignore 所修饰的测试方法会被测试运行器忽略，例如以下的test1方法就会被测试运行器忽略执行。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;@Ignore
-@Test
-public void test1() {
-	System.out.println(&quot;test1&quot;);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;@Test(timeout=毫秒），用来指定时间上限，如果这个测试方法的执行时间超过了这个时间值则测试失败。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// 会执行失败，因为sleep的时间长于设定的timeout时间
-@Test(timeout=1000)
-public void test() {
-	try {
-		Thread.sleep(2000);
-	} catch (InterruptedException e) {
-		e.printStackTrace();
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;@Test(expected=异常类)，用expected来指定应该抛出的异常，如果在执行过程中没有抛出异常或者抛出的异常不是指定的异常，则测试失败。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;// 这个测试案例会执行成功，因为指定的异常就是程序要抛出的异常
-@Test(expected=IndexOutOfBoundsException.class) 
-public void outOfBounds() 
-{
-    new ArrayList&amp;lt;Object&amp;gt;().get(1);
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;测试套件就是组织所要测试的类一起运行，如果单个类单独的运行是比较麻烦的，可以使用测试套件一起运行这些测试类。需要注意的是：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;测试套件的类是不包含其他任何方法&lt;/li&gt;
-  &lt;li&gt;同时要更改测试运行器为Suite.class&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;将要测试的类作为数组传入到SuiteClasses({})中&lt;/p&gt;
-
-    &lt;hr /&gt;
-
-    &lt;pre&gt;&lt;code&gt;  // 更改测试运行器以及将要测试的类放入SuiteClasses中
-  @RunWith(Suite.class)
-  @SuiteClasses({ AppTest.class, CalculateTest.class, JunitFlowTest.class })
-  public class AllTests {
-      // 没有测试方法
-  }
-&lt;/code&gt;&lt;/pre&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-				<pubDate>Mon, 22 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/22/Junit%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.html</link>
-				<guid isPermaLink="true">/2015/06/22/Junit%E4%BD%BF%E7%94%A8%E7%AC%94%E8%AE%B0.html</guid>
 			</item>
 		
 	</channel>

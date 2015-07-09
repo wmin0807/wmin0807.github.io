@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Java学习笔记4</title>
+	
+	<meta name="author" content="wangmin">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy coding
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Java学习笔记4 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   July 
+	   9th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="section">集合</h4>
+
+<p>Java的集合大致可以分成Set List 和 Map三种体系结构。其中Set代表无序不可重复的集合；List代表有序、重复的集合；而Map代表具有映射关系的集合。</p>
+
+<p>Java的集合类主要由两个接口派生而来：Collection 和 Map，这两个接口是根接口。Set 和 List两个接口派生于Collection接口。根据Set List 和 Map三种类型的特点，可以得出这样的结论：</p>
+
+<p>如果访问List集合中的元素，可以直接使用元素的索引；如果访问Map集合需要根据key来访问，访问Set集合则只能根据元素本身。使用比较多的是：
+HashSet TreeSet ArrayList ArrayDeque LinkedList HashMap TreeMap</p>
+
+<p><strong>Set</strong></p>
+
+<p>Set集合不允许包含相同的元素，如果把两个相同的元素添加到Set集合中，则会添加失败。Set判断两个对象相同不是使用==运算符，而是根据equals方法，也就是说两个对象用equlas方法判断返回true，则可以添加成功。Set的子类包含：HashSet 、 TreeSet 、 EnumSet</p>
+
+<p><strong>HashSet</strong></p>
+
+<p>HashSet具有以下几个特点：</p>
+
+<ul>
+  <li>不能保证元素的排列顺序，遍历的元素可能与添加的元素顺序可能不一样。</li>
+  <li>HashSet不是同步的，如果两个以上的线程来修改HashSet则需要手动的保证代码的同步。</li>
+  <li>集合元素可以为null</li>
+</ul>
+
+<p>HashSet中存入一个元素的时候，系统会根据该元素的hashCode()返回的数字决定存储的位置。如果两个元素根据equals方法返回true，但是hashCode不一样，则HashSet同样会将两个对象添加成功。</p>
+
+<p>因此HashSet判断两个对象是否相等，需要equals返回true，同时hashCode返回的数值也一样。应该在重写equlas方法的时候，应该也需要重写hashCode方法。</p>
+
+<p><strong>LinkedHashSet</strong></p>
+
+<p>LinkedHashSet 是HashSet的子类，它也是根据hashCode值来决定元素的存储位置，但是它不同的是需要使用链表来维护元素的次序。这样使得元素看起来是以插入的顺序保存的。</p>
+
+<p><strong>TreeSet</strong></p>
+
+<p>TreeSet是SortedSet接口的实现类，因此它可以确保TreeSet中的元素都是有序的。</p>
+
+<p>TreeSet集合采用hash算法来决定元素的存储位置，同时TreeSet采用红黑树的数据结构来存储集合元素。TreeSet采用了两种排序方法：自然排序和定制排序。</p>
+
+<p>自然排序是根据添加到TreeSet中的对象的compareTo(Object obj)来判断。因此在加入到TreeSet中的所有对象都要实现Comparable接口。</p>
+
+<pre><code>class Test implements Comparable {
+	...
+	
+	public int comparaTo(Object obj) {
+	
+		...
+	
+	}
+	...
+}
+</code></pre>
+
+<p>这个Test对象就可以添加到TreeSet集合中。</p>
+
+<p>定制排序：</p>
+
+<p>定制排序是创建TreeSet对象的时候指定比较方法，</p>
+
+<pre><code>TreeSet ts = new TreeSet(new Comparator() {
+	
+	public int compare(Object o1, Object o2) {
+		...
+	}
+	
+});
+</code></pre>
+
+<p>这样在添加到TreeSet中的对象就不需要自己实现Comparable接口，因为TreeSet已经帮你实现了。</p>
+
+<p><strong>ArrayList Vector</strong></p>
+
+<p>ArrayList &amp;&amp; Vector 都是基于数组实现的List类。他们都是内部封装了一个动态可分配的数组，使用initialCapacity参数来设置该数组的长度，当向ArrayList和Vector中添加的元素超过了数组的长度则initialCapacity将会自动增长。</p>
+
+<p>ArrayList 与 Vector之间的主要区别是：ArrayList是线程不安全的，当多个线程修改同一个ArrayList集合的时候，需要手动的保证线程的安全。Vector是线程安全的。</p>
+
+<p>在Arrays中提供了asList(….)方法，把指定的数组转成List集合。<strong>但是需要注意的是转成后的List对象是不可以使用add remove等操作的，只能遍历。</strong></p>
+
+<p><strong>LinkedList</strong></p>
+
+<p>LinkedList 是List的一个集合，同时还实现了Deque接口，因此它可以被当成双端队列来使用。自然也可以被当成栈来使用。LinkedList内部使用的是链表的形式来保存集合中的元素。因此随机访问的性能不好，但是插入和删除的性能比较好。</p>
+
+<p>-Xms 是设置JVM的堆内存初始值大小。
+-Xmx 是设置JVM的堆内存最大大小。</p>
+
+<p>总结：如果需要随机访问的性能，则考虑使用ArrayList，如果需要插入、删除的性能，则需要考虑使用LinkedList.</p>
+
+<p><strong>Hashtable &amp;&amp; HashMap</strong></p>
+
+<p>两者之间的区别：</p>
+
+<ul>
+  <li>Hashtable 是一个线程安全的类，HashMap线程不安全。</li>
+  <li>Hashtable 不允许使用null作为key和value，但是HashMap是可以使用null作为key和value的。</li>
+</ul>
+
+<p>因此 HashMap中只能有一个key位null，但是可以有无数的value值为null。</p>
+
+<p>与LinkedHashSet一样，Map中也存在一个LinkedHashMap，用链表来记录map对象的添加顺序。</p>
+
+<p>SortedMap 与 TreeMap 也是可以排序的：</p>
+
+<ul>
+  <li>自然排序： TreeMap 的所有key必须实现Comparable接口，而且所有的key应该是同一个类的对象，否则会抛出异常信息。</li>
+  <li>定制排序： 创建TreeMap对象的时候，传入一个Comparator对象，该对象负责对TreeMap中所有的key进行排序。</li>
+</ul>
+
+<p><strong>Collections</strong></p>
+
+<p>Java 为 Set List Map 提供了一个工具类： Collections，它提供了大量方法对集合元素进行排序，查询和修改等操作。还提供了将集合元素对象设置为不可变、对集合对象实现同步的控制方法。</p>
+
+<pre><code>reverse / shuffle / sort / swap / rotate
+</code></pre>
+
+<p>Collections 提供了多个synchronizedXxx()方法，将集合包装成线程同步的集合。从而解决多线程并发的问题。</p>
+
+<pre><code>Collection c = Collecionts.synchronizedCollection(new ArrayList());
+List list = Collecionts.synchronizedList(new ArrayList());
+Set set = Collecionts.synchronizedSet(new HashSet());
+Map m = Collecionts.synchronizedMap(new HashMap());
+</code></pre>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记4&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html" title="spark-jobserver的安装">&larr; Previous</a></li>
+		  
+		  
+			<li class="next disabled"><a>Next &rarr;</a>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
