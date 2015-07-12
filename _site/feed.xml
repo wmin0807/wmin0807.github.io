@@ -7,6 +7,65 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记6</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;异常&lt;/h4&gt;
+
+&lt;p&gt;Java把所有的非正常信息分成两类：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;异常&lt;/li&gt;
+  &lt;li&gt;错误&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;这两类异常都是继承于Throwable。&lt;/p&gt;
+
+&lt;p&gt;Java异常捕获有一个特点就是，把小异常放在catch块的前面进行先处理，然后再捕获大异常，把大异常放在catch块的后面。&lt;/p&gt;
+
+&lt;p&gt;有的时候在try块里面打开的物理资源（例如：数据库连接、网络连接和磁盘文件等），这些物理资源都必须显示的回收。Java的垃圾回收机制是不会回收任何的物理资源，垃圾回收机制只能回收堆内存中的对象所占用的内存。这就必须使用finally来完成垃圾的回收。&lt;/p&gt;
+
+&lt;p&gt;Java的异常也被分成两类：Checked异常和Runtime异常。所有的RuntimeException类及其子类的实例都被称为Runtime异常，不是RuntimeException类及其子类的异常实例则被称为Checked异常。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;自定义异常&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;如果是自定义检查性异常则需要继承Exception基类，然后提供一个无参的构造器，以及一个带字符串的有参数构造器，并且将这个字符串参数作为该异常对象的描述信息。例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class ExceptionTest extends Exception {
+	public ExceptionTest() {}
+	public ExceptionTest(String msg) {
+		super(msg);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果定义的是非检查性异常（也就是运行时异常），就需要自定义的类继承RuntimeException类，并且提供两个构造器，提供的形式如检查性异常一样。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class RuntimeExceptionTest extends RuntimeException {
+	public RuntimeExceptionTest() {}
+	public RuntimtExceptionTest(String msg) {super(msg);}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;对于异常信息的处理一般的做大是：层与层之间的异常信息有非常清晰的划分，上层功能的实现严格依赖于下层的API，但是不会跨界访问。例如：当业务逻辑层出现SQLException异常的时候，程序不应该把底层的SQLException异常传到用户界面，通常的做法是在程序中先捕获原始的异常信息，然后抛出一个新的业务异常，新的业务异常中包含了对用户的提示信息。这种处理方式被称为异常转译。例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public void exceptionMethod() throws SalException {
+
+	try {
+	...
+	} catch(SQLException e) {
+		// 做一些处理
+		...
+		// 包装异常，抛出一个新的异常
+		throw new SalException(...);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+				<pubDate>Sat, 11 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/11/Java%E7%AC%94%E8%AE%B06.html</link>
+				<guid isPermaLink="true">/2015/07/11/Java%E7%AC%94%E8%AE%B06.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记5</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;泛型&lt;/h4&gt;
 
@@ -989,31 +1048,6 @@ scp  -r local_dir username@servername:remote_dir
 				<pubDate>Fri, 26 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</link>
 				<guid isPermaLink="true">/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</guid>
-			</item>
-		
-			<item>
-				<title>ssh_exchange_identification</title>
-				<description>&lt;p&gt;在使用ssh user@ip连接远程主机的时候出现这个问题：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;ssh_exchange_identification: Connection closed by remote host 
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;针对这个问题做一下简单的总结：&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;首先可以使用telent yourhost 22查看一下端口是否能通。&lt;/li&gt;
-  &lt;li&gt;首先怀疑是该机器out of memory，因为ssh 到一台机器的时候，这台机器会fork进程来完成这个操作，如果是系统的进程数太多超过限制，或者内存不足无法满足fork子进程操作所需要的资源，操作系统会主动断开链接。如果需要更多的信息可以使用ssh -v …进行链接操作查看更多的错误信息。&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;有可能是yourhost 机器下的/etc/hosts.allow文件不允许你的ip地址进行ssh登录。这个时候需要修改这个文件，具体的修改可以参考这个链接地址：&lt;/p&gt;
-
-    &lt;p&gt;&lt;strong&gt;http://www.rjkfw.com/s_596.html&lt;/strong&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-</description>
-				<pubDate>Tue, 23 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/23/Ssh_exchange_identification.html</link>
-				<guid isPermaLink="true">/2015/06/23/Ssh_exchange_identification.html</guid>
 			</item>
 		
 	</channel>

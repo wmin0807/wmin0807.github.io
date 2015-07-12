@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Java学习笔记5</title>
+	<title>Java学习笔记6</title>
 	
 	<meta name="author" content="wangmin">
 
@@ -117,7 +117,7 @@
 
 	<div class="col-sm-9 col-sm-offset-3">
 		<div class="page-header">
-  <h1>Java学习笔记5 </h1>
+  <h1>Java学习笔记6 </h1>
 </div>
 	
 <article>
@@ -126,131 +126,62 @@
 	 <span class="post-date">
 	   
 	   July 
-	   10th,
+	   11th,
 	   
 	   2015
 	 </span>
 	  <div class="article_body">
-	  <h4 id="section">泛型</h4>
+	  <h4 id="section">异常</h4>
 
-<p>所谓泛型就是在定义类、接口、方法时使用类型形参，这个类型形参将在声明变量、创建对象、调用方法时动态的指定。虽然在使用集合类，比如：List、Set等类时，会使用泛型，但是根据定义并不是只针对集合，在定义类的时候就可以指定泛型。</p>
+<p>Java把所有的非正常信息分成两类：</p>
 
-<pre><code>public class Person&lt;T&gt; {
-	private T info;
-	public Person(T info) {
-		this.info = info;
+<ul>
+  <li>异常</li>
+  <li>错误</li>
+</ul>
+
+<p>这两类异常都是继承于Throwable。</p>
+
+<p>Java异常捕获有一个特点就是，把小异常放在catch块的前面进行先处理，然后再捕获大异常，把大异常放在catch块的后面。</p>
+
+<p>有的时候在try块里面打开的物理资源（例如：数据库连接、网络连接和磁盘文件等），这些物理资源都必须显示的回收。Java的垃圾回收机制是不会回收任何的物理资源，垃圾回收机制只能回收堆内存中的对象所占用的内存。这就必须使用finally来完成垃圾的回收。</p>
+
+<p>Java的异常也被分成两类：Checked异常和Runtime异常。所有的RuntimeException类及其子类的实例都被称为Runtime异常，不是RuntimeException类及其子类的异常实例则被称为Checked异常。</p>
+
+<p><strong>自定义异常</strong></p>
+
+<p>如果是自定义检查性异常则需要继承Exception基类，然后提供一个无参的构造器，以及一个带字符串的有参数构造器，并且将这个字符串参数作为该异常对象的描述信息。例如：</p>
+
+<pre><code>public class ExceptionTest extends Exception {
+	public ExceptionTest() {}
+	public ExceptionTest(String msg) {
+		super(msg);
 	}
 }
-
-Person&lt;String&gt; person = new Person&lt;&gt;("name");
 </code></pre>
 
-<p>当创建了带泛型声明的接口、父类的时候，可以为该类接口创建实现类、或从该父类派生出子类。但需要注意的是，当使用这些泛型接口、父类的时候不能再包含类型形参。例如下面是一种错误的描述：</p>
+<p>如果定义的是非检查性异常（也就是运行时异常），就需要自定义的类继承RuntimeException类，并且提供两个构造器，提供的形式如检查性异常一样。</p>
 
-<pre><code>// 这是一种错误的描述
-public class Student extend Person&lt;T&gt; {
-
+<pre><code>public class RuntimeExceptionTest extends RuntimeException {
+	public RuntimeExceptionTest() {}
+	public RuntimtExceptionTest(String msg) {super(msg);}
 }
 </code></pre>
 
-<p>可以使用如下的方式来继承该类：</p>
+<p>对于异常信息的处理一般的做大是：层与层之间的异常信息有非常清晰的划分，上层功能的实现严格依赖于下层的API，但是不会跨界访问。例如：当业务逻辑层出现SQLException异常的时候，程序不应该把底层的SQLException异常传到用户界面，通常的做法是在程序中先捕获原始的异常信息，然后抛出一个新的业务异常，新的业务异常中包含了对用户的提示信息。这种处理方式被称为异常转译。例如：</p>
 
-<pre><code>public class Student extend Person&lt;String&gt; {
+<pre><code>public void exceptionMethod() throws SalException {
 
-}
-</code></pre>
-
-<p>或者不指定泛型类型，但是这样会有警告信息：</p>
-
-<pre><code>public class Student extend Person {
-
-}
-</code></pre>
-
-<p>有的时候我们在程序中需要使用泛型的父类，这个时候可以使用如下方式实现：</p>
-
-<pre><code>// 这种用法有警告信息
-public void test(List list) {
-	....
-}
-</code></pre>
-
-<p>这种方式是正确的，但是使用这种方式可能会引起警告信息，如果采用下面的方式来使用就会引起错误：</p>
-
-<pre><code>// 这种用法是错误的
-public void test(List&lt;Object&gt; list) {
-
+	try {
 	...
-
-}
-</code></pre>
-
-<p>在Java中为了表示泛型类的父类，需要使用类型通配符，就是用？来表示。在上面的例子中可以使用如下的形式来表示：</p>
-
-<pre><code>// 这种表示方式表示所有List类的父类，没有错误也没有警告信息
-public void test(List&lt;?&gt; list) {
-
-	...
-
-}
-</code></pre>
-
-<p>但是这里存在一个问题，如果使用List&lt;?&gt;这种父类，在程序中使用的话还需要强制类型的转换，转换成需要的类型，例如：</p>
-
-<pre><code>public void test(List&lt;?&gt; list) {	
-	for (Object obj : list) {
-		String str = (String)obj;
+	} catch(SQLException e) {
+		// 做一些处理
 		...
+		// 包装异常，抛出一个新的异常
+		throw new SalException(...);
 	}
 }
 </code></pre>
-
-<p>这种使用方式还需要把对象强制类型转换一下，为了解决这种问题，可以给类型通配符设定一个上线：</p>
-
-<pre><code>public void test(List&lt;? extends xxx&gt; list) {
-	
-	...
-
-}
-</code></pre>
-
-<p>这种方式就可以把List中的对象当成xxx类型，直接访问。</p>
-
-<p><strong>在定义泛型类的时候并不希望这个泛型类型是随意添加的，需要指定该类型是某个类型的子类，这个时候需要指定泛型类型的上限。</strong></p>
-
-<p>为了解决这个问题需要指定类型形参的上限，例子如下：</p>
-
-<pre><code>public class Question&lt;T extends Person&gt; {
-
-	...
-	
-}
-</code></pre>
-
-<p>这个时候在使用类型T的时候就必须传入Person的子类。</p>
-
-<p><strong>泛型方法</strong></p>
-
-<p>泛型方法的签名如下：</p>
-
-<pre><code>修饰符 &lt;T, S&gt; 返回值类型 方法名(形参列表) {
-
-...
-
-}
-
-T 和 S 都可以使用这种形式： T extends E，表示E是T的上限。
-
-// 例子如下：
-public &lt;T&gt; void fromArrayToCollection(T[] a, Collection&lt;T&gt; c) {
-	for (T o : a) {
-		c.add(o);
-	}
-}
-</code></pre>
-
-<p>如果可以使用泛型方法，那泛型方法和类型通配符之间存在怎样的区别：在大多数的情况下都可以使用泛型方法来代替类型通配符。通配符就是被设计用来支持灵活的子类化的，但是泛型方法就是允许类型形参被表示方法的一个或者多个参数之间的类型依赖关系，或者方法返回值与参数之间的类型依赖关系。</p>
-
 
 	  </div>
 
@@ -263,7 +194,7 @@ public &lt;T&gt; void fromArrayToCollection(T[] a, Collection&lt;T&gt; c) {
 		<div>
       <section class="share col-sm-6">
         <h4 class="section-title">Share Post</h4>
-        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记5&via=dbtek"
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记6&via=dbtek"
            onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
           <i class="fa fa-twitter fa-lg"></i>
           Twitter
@@ -291,10 +222,10 @@ public &lt;T&gt; void fromArrayToCollection(T[] a, Collection&lt;T&gt; c) {
 
 		<ul class="pager">
 		  
-		  <li class="previous"><a href="/2015/07/09/Java%E7%AC%94%E8%AE%B04.html" title="Java学习笔记4">&larr; Previous</a></li>
+		  <li class="previous"><a href="/2015/07/10/Java%E7%AC%94%E8%AE%B05.html" title="Java学习笔记5">&larr; Previous</a></li>
 		  
 		  
-		  <li class="next"><a href="/2015/07/11/Java%E7%AC%94%E8%AE%B06.html" title="Java学习笔记6">Next &rarr;</a></li>
+			<li class="next disabled"><a>Next &rarr;</a>
 		  
 		</ul>
 
