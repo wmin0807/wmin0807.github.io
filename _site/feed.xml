@@ -7,6 +7,134 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记5</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;泛型&lt;/h4&gt;
+
+&lt;p&gt;所谓泛型就是在定义类、接口、方法时使用类型形参，这个类型形参将在声明变量、创建对象、调用方法时动态的指定。虽然在使用集合类，比如：List、Set等类时，会使用泛型，但是根据定义并不是只针对集合，在定义类的时候就可以指定泛型。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Person&amp;lt;T&amp;gt; {
+	private T info;
+	public Person(T info) {
+		this.info = info;
+	}
+}
+
+Person&amp;lt;String&amp;gt; person = new Person&amp;lt;&amp;gt;(&quot;name&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当创建了带泛型声明的接口、父类的时候，可以为该类接口创建实现类、或从该父类派生出子类。但需要注意的是，当使用这些泛型接口、父类的时候不能再包含类型形参。例如下面是一种错误的描述：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 这是一种错误的描述
+public class Student extend Person&amp;lt;T&amp;gt; {
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;可以使用如下的方式来继承该类：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Student extend Person&amp;lt;String&amp;gt; {
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;或者不指定泛型类型，但是这样会有警告信息：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Student extend Person {
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;有的时候我们在程序中需要使用泛型的父类，这个时候可以使用如下方式实现：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 这种用法有警告信息
+public void test(List list) {
+	....
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这种方式是正确的，但是使用这种方式可能会引起警告信息，如果采用下面的方式来使用就会引起错误：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 这种用法是错误的
+public void test(List&amp;lt;Object&amp;gt; list) {
+
+	...
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在Java中为了表示泛型类的父类，需要使用类型通配符，就是用？来表示。在上面的例子中可以使用如下的形式来表示：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;// 这种表示方式表示所有List类的父类，没有错误也没有警告信息
+public void test(List&amp;lt;?&amp;gt; list) {
+
+	...
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;但是这里存在一个问题，如果使用List&amp;lt;?&amp;gt;这种父类，在程序中使用的话还需要强制类型的转换，转换成需要的类型，例如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public void test(List&amp;lt;?&amp;gt; list) {	
+	for (Object obj : list) {
+		String str = (String)obj;
+		...
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这种使用方式还需要把对象强制类型转换一下，为了解决这种问题，可以给类型通配符设定一个上线：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public void test(List&amp;lt;? extends xxx&amp;gt; list) {
+	
+	...
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这种方式就可以把List中的对象当成xxx类型，直接访问。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;在定义泛型类的时候并不希望这个泛型类型是随意添加的，需要指定该类型是某个类型的子类，这个时候需要指定泛型类型的上限。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;为了解决这个问题需要指定类型形参的上限，例子如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Question&amp;lt;T extends Person&amp;gt; {
+
+	...
+	
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个时候在使用类型T的时候就必须传入Person的子类。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;泛型方法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;泛型方法的签名如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;修饰符 &amp;lt;T, S&amp;gt; 返回值类型 方法名(形参列表) {
+
+...
+
+}
+
+T 和 S 都可以使用这种形式： T extends E，表示E是T的上限。
+
+// 例子如下：
+public &amp;lt;T&amp;gt; void fromArrayToCollection(T[] a, Collection&amp;lt;T&amp;gt; c) {
+	for (T o : a) {
+		c.add(o);
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;如果可以使用泛型方法，那泛型方法和类型通配符之间存在怎样的区别：在大多数的情况下都可以使用泛型方法来代替类型通配符。通配符就是被设计用来支持灵活的子类化的，但是泛型方法就是允许类型形参被表示方法的一个或者多个参数之间的类型依赖关系，或者方法返回值与参数之间的类型依赖关系。&lt;/p&gt;
+
+</description>
+				<pubDate>Fri, 10 Jul 2015 00:00:00 +0800</pubDate>
+				<link>/2015/07/10/Java%E7%AC%94%E8%AE%B05.html</link>
+				<guid isPermaLink="true">/2015/07/10/Java%E7%AC%94%E8%AE%B05.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记4</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;集合&lt;/h4&gt;
 
@@ -886,104 +1014,6 @@ scp  -r local_dir username@servername:remote_dir
 				<pubDate>Tue, 23 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/23/Ssh_exchange_identification.html</link>
 				<guid isPermaLink="true">/2015/06/23/Ssh_exchange_identification.html</guid>
-			</item>
-		
-			<item>
-				<title>Spark学习笔记2</title>
-				<description>&lt;p&gt;&lt;strong&gt;Overview&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;每一个spark程序都是有一个驱动程序组成，并且通过main函数运行。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;spark有两个重要的抽象：&lt;/p&gt;
-
-    &lt;ol&gt;
-      &lt;li&gt;RDD，分布式弹性数据集，他是一个跨越多个节点的分布式集合。&lt;/li&gt;
-      &lt;li&gt;另一个抽象是共享变量。spark支持两种类型的共享变量：一个是广播（broadcast variables）他可以缓存一个值在集群的各个节点。另一个是累加器（accumulators）他只能执行累加的操作，比如可以做计数器和求和。&lt;/li&gt;
-    &lt;/ol&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;strong&gt;Initializing Spark&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;运行spark程序，需要在程序中创建一个JavaSparkContext对象，但是在创建JavaSparkContext对象的时候需要指定SparkConf对象，这个对象是配置一些重要的参数。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;SparkConf conf = new SparkConf.setAppName(appName).setMaster(url);
-JavaSparkContext sc = new JavaSparkContext(conf); ---
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;appName就是这个任务的名字，url代表spark集群的Url地址。这个地址不要写死，因为这样可以通过命令行来传入需要执行的spark集群，方便调试与线上集群运行。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;Resilient Distributed Datasets (RDDs)&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;Spark的核心就是围绕着RDD，它是一个自动容错的分布式数据集合。他有两种方式创建，第一种就是在驱动程序中对一个集合进行并行化。第二种是来源于一个外部的存储系统。比如：共享系统、HDFS、HBase或者任何提供任何Hadoop 输入格式的数据源。&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;第一种：Parallelized Collections 创建这个集合需要调用那个JavaSparkContext的parallelize方法来初始化一个已经存在的集合。&lt;/li&gt;
-    &lt;/ul&gt;
-
-    &lt;hr /&gt;
-
-    &lt;pre&gt;&lt;code&gt;  List&amp;lt;Integer&amp;gt; data = Arrays.asList(1,2,3,4,5);
-  JavaRDD&amp;lt;Iteger&amp;gt; distData = sc.parallelize(data);
-&lt;/code&gt;&lt;/pre&gt;
-
-    &lt;p&gt;这就创建了一个并行的集合，在这个集合上可以执行	distData.reduce((a, b) -&amp;gt; a + b)&lt;/p&gt;
-
-    &lt;p&gt;在并行数组中一个很重要的参数是partitions，它来描述数组被切割的数据集数量。Spark会在每一个partitions上运行任务，这个partitions会被spark自动设置，一般都是集群中每个CPU上运行2-4partitions，但是也可以自己设置，可以通过parallelize （e.g. sc.parallelize(data, 10)），在有些地方把partitions成为 slices。&lt;/p&gt;
-
-    &lt;p&gt;&lt;strong&gt;External Datasets&lt;/strong&gt;&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;JavaRDD&lt;string&gt; distFile = sc.textFile(&quot;data.txt&quot;); &lt;/string&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-
-    &lt;p&gt;textFile也可以设置partitions参数，一般都是一个block一个partitions，但是也可以自己设置，自己设置必须要不能少于block的数量。&lt;/p&gt;
-
-    &lt;p&gt;针对Hadoop的其他输入格式，你能用这个JavaSparkContext.hadoopRDD方法，你需要设置JobConf和输入格式的类。也可以使用JavaSparkContext.newAPIHadoopRDD针对输入格式是基于“new”的MapReduceAPI&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;RDD Operations&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;RDD的操作可以分成两类：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;1. transformations 
-2. actions
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;map就是一个transformation操作，他会针对数据集的每一个元素执行一个函数。然后返回一个新的RDD来替换掉原先的RDD。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;reduce就是一个action操作，他能够聚合所有的元素通过执行一个函数，然后返回给驱动程序一个最终的值。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;所有的transformations都是lazy操作，也就是说并不会马上计算结果，要等到执行一个action操作并且返回一个值给驱动程序的时候才会执行transformations操作。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;可以调用RDD的 persist (or cache) 方法来持久化RDD，这样的话在下次使用RDD的时候就会非常快。同时也支持持久化到磁盘，或者复制到多个节点。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;直接使用 rdd.foreach(println) 在local模式下是可行的，但是在cluster模式下是不行的，必须要执行collect()方法，将所有的数据拉取到本地，然后执行foreach()操作。如果是数据量比较小的话可以使用take方法，rdd.take(100).foreach(println)&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-				<pubDate>Mon, 22 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/22/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</link>
-				<guid isPermaLink="true">/2015/06/22/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</guid>
 			</item>
 		
 	</channel>
