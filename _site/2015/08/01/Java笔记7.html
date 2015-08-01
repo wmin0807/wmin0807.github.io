@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Java学习笔记7</title>
+	
+	<meta name="author" content="wangmin">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy coding
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Java学习笔记7 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   August 
+	   1st,
+	     
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="jdbc">JDBC</h4>
+
+<p>JDBC的全称为：Java Database Connectivity，即java数据库连接。
+使用JDBC开发程序，不仅可以跨数据库，而且还是跨平台的，也就是说使用JDBC开发的程序可以在windows和unix上使用，同时可以针对mysql和oracle等其他数据库，而程序不需要做任何的修改。</p>
+
+<p>mysql的连接命令如下：</p>
+
+<pre><code>mysql -p 密码 -u 用户名 -h 主机名
+</code></pre>
+
+<p>这也可以连接远程主机。
+mysql 数据库通常支持以下两种存储机制：</p>
+
+<ul>
+  <li>MyISAM：这是mysql早期默认的存储机制，对事务的支持不够好。</li>
+  <li>InnoDB：InnoDB提供了事务安全的存储机制。InnoDB通过建立行级锁来保证事物完整性。</li>
+</ul>
+
+<p>DDL 数据定义语言：create alter drop truncate
+DML 数据操作语言：insert update delete
+DCL 数据控制语言：grant revoke</p>
+
+<p>create table/index/view/function/procedure/trigger…</p>
+
+<p>创建表的过程：</p>
+
+<p>create table [模式名.]表名
+{
+	columnName1 datatype [default expr],
+	…
+}</p>
+
+<p>数据库字段类型：</p>
+
+<ol>
+  <li>tinyint/smallint/mediumint/int/bigint</li>
+  <li>float/double</li>
+  <li>decimal(dec)</li>
+  <li>date</li>
+  <li>time</li>
+  <li>datetime</li>
+  <li>timstamp(时间戳）</li>
+  <li>year</li>
+  <li>char</li>
+  <li>varchar</li>
+  <li>binary</li>
+  <li>varbinary</li>
+  <li>tinyblob/blob/mediumblob/longblob</li>
+  <li>tinytext/text/mediumtext/longtext</li>
+  <li>enum(‘value1’,’value2’…) 其中的一个</li>
+  <li>set(‘value1’,’value2’…) 其中的几个</li>
+</ol>
+
+<hr />
+
+<p>JDBC 的编程步骤：</p>
+
+<ol>
+  <li>
+    <p>加载数据库的驱动： </p>
+
+    <p>Class.forName(driverClass),dirverClass对应数据库驱动类的字符串。如果针对mysql就是: Class.forName(“com.mysql.jdbc.Driver”);</p>
+  </li>
+  <li>
+    <p>通过DriverManager来获取数据库的连接，方法如下：</p>
+
+    <p>DriverManager.getConnection(String url, String user, String pass)</p>
+
+    <p>url/user/pass 分别代表，数据库的连接地址，用户名和密码，url针对不同的数据库有不同的地址，这个可以针对每个数据库的jdbc文档进行查看，如果针对mysql的数据库，可以使用如下的方式来连接数据：<br />
+ jdbc:mysql://hostname:port/databasename<br />
+ 如果是针对oracle的连接，则url地址如下：<br />
+ jdbc:oracle:thin:@hostname:port:databasename</p>
+  </li>
+  <li>
+    <p>通过Connection对象创建Statement对象。Connection来创建Statement方法有如下三个：</p>
+
+    <p>createStatement(): 创建Statement对象<br />
+ prepareStatement(String sql): 根据传入的sql语句，通过数据的预编译，创建预编译的Statement对象。<br />
+ prepareCall(Stirng sql): 根据传入的sql语句创建预编译的CallableSattement对象。</p>
+  </li>
+  <li>
+    <p>使用Statement来执行sql语句，但是执行的时候有如下的三种方式：</p>
+
+    <p>execute()：可以执行任何的sql语句<br />
+ executeUpdate(): 主要执行DML DDL 返回受sql影响的行数，执行DCL的时候返回0<br />
+ executeQuery() 执行查询语句，返回结果集ResultSet对象</p>
+  </li>
+  <li>
+    <p>如果是查询语句，返回的是ResultSet对象，针对ResultSet对象主要提供如下的操作，next() previous() last() beforeFirst() afterLast() 等方法来移动指针。同时可以针对每一条记录可以使用getXxx()方式来获取数据。</p>
+  </li>
+  <li>
+    <p>回收数据库的资源。</p>
+  </li>
+</ol>
+
+<hr />
+<p>简单的例子如下：</p>
+
+<pre><code>package mysqltest;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+public class MysqlMain {
+	public static void main(String[] args) {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Connection conn = null;
+		Statement stat = null;
+		ResultSet result = null;
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test",
+					"root", "root");
+			 stat = conn.createStatement();
+			 result = stat.executeQuery("select * from student");
+			 while(result.next()) {
+				 System.out.println(result.getString(1) + "  " + result.getString(2));
+			 }
+			 result.close();
+		 	 stat.close();
+		 	 conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}
+</code></pre>
+
+<hr />
+
+<p>JDBC 对事务的支持：</p>
+
+<p>在使用事务的时候需要关闭掉Connection的自动提交，因为Connection的自动提交功能是自动打开的，所以需要关闭，关闭的方式如下：</p>
+
+<pre><code>conn.setAutoCommit(false)
+</code></pre>
+
+<p>在执行完sql语句后，需要手动的实现commit，语句如下：</p>
+
+<pre><code>conn.commit()
+</code></pre>
+
+<p>在遇到执行失败的时候可以使用conn.rellback() 来回滚事务。</p>
+
+<hr />
+
+<p>批量更行是针对有大量的更新操作，这个时候可以一次性全部执行，而不是一条条的执行，这会大大的加大性能。</p>
+
+<p>比如：</p>
+
+<pre><code>mysqlStmt.setTimestamp(23, oracleResult.getTimestamp("LOG_TIME"));
+.......
+.......
+mysqlStmt.addBatch();
+</code></pre>
+
+<p>最后执行：</p>
+
+<pre><code>mysqlStmt.executeBatch();
+</code></pre>
+
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记7&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/07/11/Java%E7%AC%94%E8%AE%B06.html" title="Java学习笔记6">&larr; Previous</a></li>
+		  
+		  
+			<li class="next disabled"><a>Next &rarr;</a>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+

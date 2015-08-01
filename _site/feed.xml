@@ -7,6 +7,185 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记7</title>
+				<description>&lt;h4 id=&quot;jdbc&quot;&gt;JDBC&lt;/h4&gt;
+
+&lt;p&gt;JDBC的全称为：Java Database Connectivity，即java数据库连接。
+使用JDBC开发程序，不仅可以跨数据库，而且还是跨平台的，也就是说使用JDBC开发的程序可以在windows和unix上使用，同时可以针对mysql和oracle等其他数据库，而程序不需要做任何的修改。&lt;/p&gt;
+
+&lt;p&gt;mysql的连接命令如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysql -p 密码 -u 用户名 -h 主机名
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这也可以连接远程主机。
+mysql 数据库通常支持以下两种存储机制：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;MyISAM：这是mysql早期默认的存储机制，对事务的支持不够好。&lt;/li&gt;
+  &lt;li&gt;InnoDB：InnoDB提供了事务安全的存储机制。InnoDB通过建立行级锁来保证事物完整性。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;DDL 数据定义语言：create alter drop truncate
+DML 数据操作语言：insert update delete
+DCL 数据控制语言：grant revoke&lt;/p&gt;
+
+&lt;p&gt;create table/index/view/function/procedure/trigger…&lt;/p&gt;
+
+&lt;p&gt;创建表的过程：&lt;/p&gt;
+
+&lt;p&gt;create table [模式名.]表名
+{
+	columnName1 datatype [default expr],
+	…
+}&lt;/p&gt;
+
+&lt;p&gt;数据库字段类型：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;tinyint/smallint/mediumint/int/bigint&lt;/li&gt;
+  &lt;li&gt;float/double&lt;/li&gt;
+  &lt;li&gt;decimal(dec)&lt;/li&gt;
+  &lt;li&gt;date&lt;/li&gt;
+  &lt;li&gt;time&lt;/li&gt;
+  &lt;li&gt;datetime&lt;/li&gt;
+  &lt;li&gt;timstamp(时间戳）&lt;/li&gt;
+  &lt;li&gt;year&lt;/li&gt;
+  &lt;li&gt;char&lt;/li&gt;
+  &lt;li&gt;varchar&lt;/li&gt;
+  &lt;li&gt;binary&lt;/li&gt;
+  &lt;li&gt;varbinary&lt;/li&gt;
+  &lt;li&gt;tinyblob/blob/mediumblob/longblob&lt;/li&gt;
+  &lt;li&gt;tinytext/text/mediumtext/longtext&lt;/li&gt;
+  &lt;li&gt;enum(‘value1’,’value2’…) 其中的一个&lt;/li&gt;
+  &lt;li&gt;set(‘value1’,’value2’…) 其中的几个&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;JDBC 的编程步骤：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;加载数据库的驱动： &lt;/p&gt;
+
+    &lt;p&gt;Class.forName(driverClass),dirverClass对应数据库驱动类的字符串。如果针对mysql就是: Class.forName(“com.mysql.jdbc.Driver”);&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;通过DriverManager来获取数据库的连接，方法如下：&lt;/p&gt;
+
+    &lt;p&gt;DriverManager.getConnection(String url, String user, String pass)&lt;/p&gt;
+
+    &lt;p&gt;url/user/pass 分别代表，数据库的连接地址，用户名和密码，url针对不同的数据库有不同的地址，这个可以针对每个数据库的jdbc文档进行查看，如果针对mysql的数据库，可以使用如下的方式来连接数据：&lt;br /&gt;
+ jdbc:mysql://hostname:port/databasename&lt;br /&gt;
+ 如果是针对oracle的连接，则url地址如下：&lt;br /&gt;
+ jdbc:oracle:thin:@hostname:port:databasename&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;通过Connection对象创建Statement对象。Connection来创建Statement方法有如下三个：&lt;/p&gt;
+
+    &lt;p&gt;createStatement(): 创建Statement对象&lt;br /&gt;
+ prepareStatement(String sql): 根据传入的sql语句，通过数据的预编译，创建预编译的Statement对象。&lt;br /&gt;
+ prepareCall(Stirng sql): 根据传入的sql语句创建预编译的CallableSattement对象。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;使用Statement来执行sql语句，但是执行的时候有如下的三种方式：&lt;/p&gt;
+
+    &lt;p&gt;execute()：可以执行任何的sql语句&lt;br /&gt;
+ executeUpdate(): 主要执行DML DDL 返回受sql影响的行数，执行DCL的时候返回0&lt;br /&gt;
+ executeQuery() 执行查询语句，返回结果集ResultSet对象&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;如果是查询语句，返回的是ResultSet对象，针对ResultSet对象主要提供如下的操作，next() previous() last() beforeFirst() afterLast() 等方法来移动指针。同时可以针对每一条记录可以使用getXxx()方式来获取数据。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;回收数据库的资源。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+&lt;p&gt;简单的例子如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;package mysqltest;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+
+public class MysqlMain {
+	public static void main(String[] args) {
+		try {
+			Class.forName(&quot;com.mysql.jdbc.Driver&quot;);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Connection conn = null;
+		Statement stat = null;
+		ResultSet result = null;
+		try {
+			conn = DriverManager.getConnection(&quot;jdbc:mysql://127.0.0.1:3306/test&quot;,
+					&quot;root&quot;, &quot;root&quot;);
+			 stat = conn.createStatement();
+			 result = stat.executeQuery(&quot;select * from student&quot;);
+			 while(result.next()) {
+				 System.out.println(result.getString(1) + &quot;  &quot; + result.getString(2));
+			 }
+			 result.close();
+		 	 stat.close();
+		 	 conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;JDBC 对事务的支持：&lt;/p&gt;
+
+&lt;p&gt;在使用事务的时候需要关闭掉Connection的自动提交，因为Connection的自动提交功能是自动打开的，所以需要关闭，关闭的方式如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;conn.setAutoCommit(false)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在执行完sql语句后，需要手动的实现commit，语句如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;conn.commit()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;在遇到执行失败的时候可以使用conn.rellback() 来回滚事务。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;批量更行是针对有大量的更新操作，这个时候可以一次性全部执行，而不是一条条的执行，这会大大的加大性能。&lt;/p&gt;
+
+&lt;p&gt;比如：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysqlStmt.setTimestamp(23, oracleResult.getTimestamp(&quot;LOG_TIME&quot;));
+.......
+.......
+mysqlStmt.addBatch();
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最后执行：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mysqlStmt.executeBatch();
+&lt;/code&gt;&lt;/pre&gt;
+
+</description>
+				<pubDate>Sat, 01 Aug 2015 00:00:00 +0800</pubDate>
+				<link>/2015/08/01/Java%E7%AC%94%E8%AE%B07.html</link>
+				<guid isPermaLink="true">/2015/08/01/Java%E7%AC%94%E8%AE%B07.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记6</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;异常&lt;/h4&gt;
 
@@ -997,57 +1176,6 @@ public static void wirteResultToMysql(Map&amp;lt;String, Long&amp;gt; result) th
 				<pubDate>Sun, 28 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</link>
 				<guid isPermaLink="true">/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</guid>
-			</item>
-		
-			<item>
-				<title>Linux一些常用的命令</title>
-				<description>&lt;h4 id=&quot;section&quot;&gt;查看内存的使用情况&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;free  [-m/-g] 使用free -g 可以以G为单位显示当前系统内存的使用状况。
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;cpumemswap-&quot;&gt;查看 CPU/Mem/Swap 的使用情况&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;top -M
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;section-1&quot;&gt;查看磁盘的使用情况以及文件系统被挂载的位置&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;df -lh, 也可以使用 fdisk -l 来查看详细的磁盘分区情况
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;section-2&quot;&gt;解压文件到指定的路径&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;tar -xzvf ....tar.gz -C 解压文件存放的位置
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;scp&quot;&gt;scp命令拷贝文件&lt;/h4&gt;
-
-&lt;pre&gt;&lt;code&gt;在linux下一般用scp这个命令来通过ssh传输文件。
-
-1、从服务器上下载文件
-scp username@servername:/path/filename /var/www/local_dir（本地目录）
-
- 例如scp root@192.168.0.101:/var/www/test.txt  把192.168.0.101上的/var/www/test.txt 的文件下载到/var/www/local_dir（本地目录）
-
-2、上传本地文件到服务器
-scp /path/filename username@servername:/path   
-
-例如scp /var/www/test.php  root@192.168.0.101:/var/www/  把本机/var/www/目录下的test.php文件上传到192.168.0.101这台服务器上的/var/www/目录中
-
-3、从服务器下载整个目录
-scp -r username@servername:/var/www/remote_dir/（远程目录） /var/www/local_dir（本地目录）
-
-例如:scp -r root@192.168.0.101:/var/www/test  /var/www/  
-
-4、上传目录到服务器
-scp  -r local_dir username@servername:remote_dir
-例如：scp -r test  root@192.168.0.101:/var/www/   把当前目录下的test目录上传到服务器的/var/www/ 目录
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-				<pubDate>Fri, 26 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</link>
-				<guid isPermaLink="true">/2015/06/26/Linux%E4%B8%80%E4%BA%9B%E5%B8%B8%E7%94%A8%E7%9A%84%E5%91%BD%E4%BB%A4.html</guid>
 			</item>
 		
 	</channel>
