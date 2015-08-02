@@ -7,6 +7,269 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Hive学习笔记1</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;第一部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;什么是Hive：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Hive是基于Hadoop之上的数据仓库，数据存放在HDFS上，它同样可以通过ETL来进行数据的抽取、转换和加载。同时Hive可以自己开发Mapreduce程序来完成本身不能提供的数据处理操作。Hive本身就是一个SQL的解析引擎，他将SQL	语句转成Mapreduce任务在hadoop之上执行。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;什么是数据仓库：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;数据仓库是一个面向主题的，集成的，不可更新的，随时间不变化的数据集合，它用于支持企业或组织的决策分析处理。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;针对数据仓库的概念的解释：首先数据仓库中的数据是面向主题的，也就是这些数据的都是为了描述同一类事情，同时它的数据主要用于查询操作，不会对数据仓库中的数据进行删除和更新操作。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;OLTP:&lt;/strong&gt; 联机事务处理（面向的是事务，需要实时的更新操作，银行转账）&lt;br /&gt;
+&lt;strong&gt;OLAP:&lt;/strong&gt; 联机分析处理（面向历史数据，进行数据的分析与挖掘，主要面向查询，不会做更新和插入数据，推荐系统）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;注意:&lt;/strong&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;在搭建数据仓库的过程最常用的两种模型就是：星型模型和雪花模型，雪花模型是在星型模型上发展出来的。什么是星型模型，比如一个商品的推荐系统，主题应该是商品，但是围绕商品的有客户信息、厂家信息、促销信息等很多信息，这样就组成了一个星型模型。但是客户信息中也存在客户的家庭的信息、地址信息等。这样再关联的话就是一个雪花模型了。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;section-1&quot;&gt;第二部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Hive的体系结构：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Hive将元数据存储在数据库中（metastore），这个数据库支持mysql、derby等数据库中。Hive默认是存储在derby数据库中。&lt;/p&gt;
+
+&lt;p&gt;Hive的元数据有哪些？ 包括表的名字、表的列和分区及其属性，表的属性包括是否为外部表等，表的数据所在目录等。&lt;/p&gt;
+
+&lt;p&gt;首先Hive是基于Hadoop的，所以hive的数据会使用HDFS进行保存，同时hive的查询操作也是转化成hadoop的MapReduce操作，所以在hive中会存在一个Hive Driver：包括编译器、解析器和优化器。&lt;/p&gt;
+
+&lt;p&gt;在Hive的驱动之前有访问接口、jdbc以及WebConsole等方式进行操作。当然hive的元信息是存放在关系型数据库中的。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;HQL的执行过程：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;解释器、编译器、优化器完成HQL查询语句从词法分析、语法分析、编译、优化以及查询计划的生成。生成的查询计划存储在HDFS中，并在随后的Mapreduce调用执行。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;section-2&quot;&gt;第三部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Hive的安装：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Hive的官网地址： hive.apache.org
+apache 的历史工程发布页面在： archive.apache.org，在这个页面下可以找到hive工程。这里使用的是0.13版本。&lt;/p&gt;
+
+&lt;p&gt;Hive的安装之前需要先将hadoop安装好，hive有三种安装方式：嵌入模式、本地模式、远程模式。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;嵌入模式：&lt;/strong&gt;&lt;br /&gt;
+	Hive将元信息存储在Hive自带的Derby数据库中。但是这种操作方式存在一些缺陷：
+	1. 只允许创建一个连接，也就是只允许一个用户操作hive
+	2. 多用于Demo&lt;/p&gt;
+
+&lt;p&gt;在安装hive之前需要先安装hadoop，然后把hive的压缩包解压，在bin目录下执行./hive进入hive的启动脚本，这种方式就是使用的嵌入式模式启动hive，会在当前目录下生成一个metastore_db的目录，这个就是元信息目录。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;本地模式：&lt;/strong&gt;&lt;br /&gt;
+	Hive将元信息存储在mysql数据库中，mysql数据库与hive运行在同一台物理机上。这种方式可以允许多个用户操作hive，可以用于开发和测试。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;远程模式：（推荐使用这种方式）&lt;/strong&gt;&lt;br /&gt;
+	hive将元信息存储在mysql数据库中，mysql数据库与hive运行在不同的物理机上。&lt;/p&gt;
+
+&lt;p&gt;元信息存储在远程的mysql中。进入远程mysql中，mysql -u … -p … , 进入后使用create database hive创建一个hive数据库来保存元数据。&lt;/p&gt;
+
+&lt;p&gt;在hive解压后，把mysql的驱动jar包上传到hive的lib目录中。这样hive才能操作mysql数据库。然后需要更改hive的配置文件。在conf中创建一个hive-site.xml文件，文件的内容如下：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;configuration&amp;gt;
+	&amp;lt;property&amp;gt;
+		&amp;lt;name&amp;gt;javax.jdo.option.ConnectionURL&amp;lt;/name&amp;gt;
+		&amp;lt;value&amp;gt;jdbc:mysql://ip:3306/hive&amp;lt;/value&amp;gt;
+		&amp;lt;name&amp;gt;javax.jdo.option.ConnectionDriverName&amp;lt;/name&amp;gt;
+		&amp;lt;value&amp;gt;com.mysql.jdbc.Driver&amp;lt;/value&amp;gt;
+		&amp;lt;name&amp;gt;javax.jdo.option.ConnectionUserName&amp;lt;/name&amp;gt;
+		&amp;lt;value&amp;gt;root&amp;lt;/value&amp;gt;
+		&amp;lt;name&amp;gt;javax.jdo.option.ConnectionPassword&amp;lt;/name&amp;gt;
+		&amp;lt;value&amp;gt;root&amp;lt;/value&amp;gt;
+	&amp;lt;/property&amp;gt;
+&amp;lt;/configuration&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当配置文件设置完后以后，就可以启动hive了。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;section-3&quot;&gt;第四部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Hive的管理&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用hive的脚本直接进入hive，或者 hive –service cli&lt;/p&gt;
+
+&lt;p&gt;cli常用的命令：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;清屏：ctrl + l 或者 !clear;&lt;/li&gt;
+  &lt;li&gt;查看数据仓库中的表： show tables;&lt;/li&gt;
+  &lt;li&gt;查看数据仓库中的函数：show functions;&lt;/li&gt;
+  &lt;li&gt;查看表结构： desc 表名；&lt;/li&gt;
+  &lt;li&gt;查看hdfs上的文件列表： dfs -ls /user 查看hadoop上/user上的文件&lt;/li&gt;
+  &lt;li&gt;执行linux命令： !命令&lt;/li&gt;
+  &lt;li&gt;执行HQL语句：select * from test;当执行这个语句的时候是不会开启一个MapReduce任务的，因为这个是获取全部的数据，获取全部的数据只需要把所有的数据读取出来就可以了，并不需要启动一个任务。但是在执行select name from test;查询某一个字段的信息的时候就需要启动一个MapReduce任务了。&lt;/li&gt;
+  &lt;li&gt;可以执行一个sql脚本：source /root/test.sql 这个语句就是启动一个执行sql脚本。这种方式就是和mysql执行外部的信息一样。&lt;/li&gt;
+  &lt;li&gt;hive -S 进入hive启动任务不会产生调试信息，直接产生MapReduce的结果。&lt;/li&gt;
+  &lt;li&gt;hive -e 执行sql语句。hive -e ‘show tables’;这样的执行就直接在linux的命令行操作就行，并不需要进入hive的交互式中执行。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;Web界面方式：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;启动方式： #hive –service hwi &amp;amp;
+在0.13.0中并没有包含web管理的war包，需要自己编译。&lt;/p&gt;
+
+&lt;p&gt;下载hive源码包，并且解压源码包，然后进入源码路径下的hwi目录，使用：jar cvfM0 hive-hwi-0.13.0.war -C web/ . 这样就会打成一个war包，把这个war包拷贝到hive的lib目录下，同时需要修改hive-site.xml 配置文件，这个修改可以在wiki上看到。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;property&amp;gt;
+  &amp;lt;name&amp;gt;hive.hwi.listen.host&amp;lt;/name&amp;gt;
+  &amp;lt;value&amp;gt;0.0.0.0&amp;lt;/value&amp;gt;
+  &amp;lt;description&amp;gt;This is the host address the Hive Web Interface will listen on&amp;lt;/description&amp;gt;
+&amp;lt;/property&amp;gt;
+ 
+&amp;lt;property&amp;gt;
+  &amp;lt;name&amp;gt;hive.hwi.listen.port&amp;lt;/name&amp;gt;
+  &amp;lt;value&amp;gt;9999&amp;lt;/value&amp;gt;
+  &amp;lt;description&amp;gt;This is the port the Hive Web Interface will listen on&amp;lt;/description&amp;gt;
+&amp;lt;/property&amp;gt;
+ 
+&amp;lt;property&amp;gt;
+  &amp;lt;name&amp;gt;hive.hwi.war.file&amp;lt;/name&amp;gt;
+  &amp;lt;value&amp;gt;lib/hive-hwi-0.13.0.war&amp;lt;/value&amp;gt;
+  &amp;lt;description&amp;gt;This is the WAR file with the jsp content for Hive Web Interface&amp;lt;/description&amp;gt;
+&amp;lt;/property&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;这个就可以使用hive –service hwi启动web服务了，但是在访问这个web应用的时候，浏览器还是报出了500的错误。这个问题需要拷贝jdk的tools.jar 拷贝到hive的lib目录下。&lt;/p&gt;
+
+&lt;p&gt;这个时候就可以打开这个web界面了。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;hive的远程服务&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;启动hive的远程服务的命令如下： hive –service hiveserver &amp;amp;
+如果要使用jdbc连接hive进行操作，这个时候就需要开启hive的远程服务。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;section-4&quot;&gt;第五部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Hive的数据类型&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;基本数据类型：&lt;/p&gt;
+
+    &lt;p&gt;tinyint/smallint/int/bigint 整数类型&lt;br /&gt;
+  float/double 浮点类型&lt;br /&gt;
+  boolean 布尔类型&lt;br /&gt;
+  string/varchar/char 字符串类型&lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;复杂数据类型：&lt;/p&gt;
+
+    &lt;p&gt;array:数组类型，由一系列相同的数据类型的元素组成&lt;br /&gt;
+  map:集合类型，包含key-&amp;gt;value键值对，可以通过key来访问元素。&lt;br /&gt;
+  struct:结构类型，可以包含不同数据类型的元素，这些元素可以通
+  过“点语法”的方式来得到所需要的元素。&lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;create table student (
+age int,
+name string,
+grade array&amp;lt;float&amp;gt;);
+
+插入的时候就是： {1, wangmin, [10,20,30]};
+
+create table student1 (
+sid int,
+sname string,
+grade map&amp;lt;string, float&amp;gt;);
+
+插入数据的时候： {1,wangmin,&amp;lt;&#39;大学语文&#39;, 85&amp;gt;}
+
+create table studnet3(
+sid int,
+sname string,
+grades array&amp;lt;map&amp;lt;string, float&amp;gt;&amp;gt;);
+
+插入数据的时候：{1, wangmin, [&amp;lt;&#39;大学语文‘， 12&amp;gt;,&amp;lt;&#39;大学英语’，23&amp;gt;]}
+
+create table student4(
+sid int,
+info struct&amp;lt;nname:string, age:int, sex:string&amp;gt;);
+
+插入数据的时候：{1, {&#39;wangmin&#39;, 23, ‘男’}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;时间类型:&lt;/p&gt;
+
+    &lt;p&gt;Date: 日期（年月日）&lt;br /&gt;
+  Timestamp: 是unix的一个时间偏移量&lt;br /&gt;
+  select unix_timestamp(); 查看系统的时间偏移量&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h4 id=&quot;section-5&quot;&gt;第六部分&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Hive的数据存储&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;基于HDFS，没有专门的数据存储格式&lt;/p&gt;
+
+&lt;p&gt;Hive的数据模型：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;表可以分成以下几种：&lt;/li&gt;
+  &lt;li&gt;Table 内部表&lt;/li&gt;
+  &lt;li&gt;Partition 分区表&lt;/li&gt;
+  &lt;li&gt;External Table 外部表&lt;/li&gt;
+  &lt;li&gt;Bucket Table 桶表&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;create table t1
+(tid int, tname string, age int);
+
+create table t2
+(tid int, tname string age int);
+localtion &#39;/mytable/hive/t2&#39;;
+
+create table t3
+（tid int, tname string, age int)
+row format delimited fields terminated by &#39;,&#39;;
+
+create table t4
+as
+select * from sample_date;
+
+create table t5
+row format delimited fields terminated by &#39;,&#39;
+as
+select * from sample_data;
+
+分区表：
+
+create table partition_table
+(sid int, sname string)
+partitioned by (gender string)
+row format delimited fields terminated by &#39;,&#39;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;创建这张表的时候就是以gender进行分区
+分区表能够加快查询效率&lt;/p&gt;
+</description>
+				<pubDate>Sun, 02 Aug 2015 00:00:00 +0800</pubDate>
+				<link>/2015/08/02/Hive%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01.html</link>
+				<guid isPermaLink="true">/2015/08/02/Hive%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记7</title>
 				<description>&lt;h4 id=&quot;jdbc&quot;&gt;JDBC&lt;/h4&gt;
 
@@ -1029,153 +1292,6 @@ val sc = new SparkContext(conf)
 				<pubDate>Mon, 29 Jun 2015 00:00:00 +0800</pubDate>
 				<link>/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</link>
 				<guid isPermaLink="true">/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</guid>
-			</item>
-		
-			<item>
-				<title>Spark学习笔记3</title>
-				<description>&lt;h4 id=&quot;hdfsmysql&quot;&gt;读取HDFS中的数据，并简单分析，最后结果写入mysql数据库中。&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;首先建立工程，pom文件中引入以下几个依赖，&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;dependency&amp;gt; &amp;lt;!-- Spark dependency --&amp;gt;
-	&amp;lt;groupId&amp;gt;org.apache.spark&amp;lt;/groupId&amp;gt;
-	&amp;lt;artifactId&amp;gt;spark-core_2.10&amp;lt;/artifactId&amp;gt;
-	&amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;gt;
-&amp;lt;dependency&amp;gt;
-	&amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt;
-	&amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt;
-	&amp;lt;version&amp;gt;5.1.13&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;gt;
-&amp;lt;dependency&amp;gt;
-	&amp;lt;groupId&amp;gt;org.apache.hadoop&amp;lt;/groupId&amp;gt;
-	&amp;lt;artifactId&amp;gt;hadoop-client&amp;lt;/artifactId&amp;gt;
-	&amp;lt;version&amp;gt;2.6.0&amp;lt;/version&amp;gt;
-&amp;lt;/dependency&amp;gt;
-&amp;lt;dependency&amp;gt;
-	&amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
-	&amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
-	&amp;lt;version&amp;gt;4.11&amp;lt;/version&amp;gt;
-	&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
-&amp;lt;/dependency&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;首先需要引入spark的包，这里使用的是spark1.4的包。由于需要读取HDFS中的数据，所以需要hadoop-client文件，这个Hadoop的环境是2.6.0的环境。最后需要把结果写入mysql中，需要mysql的驱动文件，所以需要加入mysql的依赖，最后加入单元测试的包。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;创建文件ReadHDFSErrorToMysql.java&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;在main函数中首先创建JavaSparkcontext对象。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;SparkConf conf = new SparkConf().setAppName(&quot;FindError&quot;);
-JavaSparkContext sc = new JavaSparkContext(conf);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;找到指定目录下的所有文件路径，因为只有找到这个路径才能加载相应的文件。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;/**
- * 
- * 列出指定目录中的文件，这里的文件是不包括子目录的。
- * @param pathOfDirectory
- * 	目录路径
- * @return
- * @throws IOException 
- */
-public static String[] findFilePathFromDir(String dst) throws IOException {
-	Set&amp;lt;String&amp;gt; filePathSet = new HashSet&amp;lt;String&amp;gt;();
-	String[] result = null;
-	Configuration conf = new Configuration();
-	FileSystem fs = FileSystem.get(URI.create(dst), conf);
-	FileStatus fileList[] = fs.listStatus(new Path(dst));
-	int size = fileList.length;
-	for (int i = 0; i &amp;lt; size; i++) {
-		filePathSet.add(fileList[i].getPath().toString());
-	}
-	if (filePathSet.size() &amp;gt; 0) {
-		result = new String[filePathSet.size()];
-		int i = 0;
-		for (String str : filePathSet) {
-			result[i++] = str;
-		}
-	}
-	fs.close();
-	return result;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;依次遍历文件路径并为每个文件创建一个新的RDD然后计算出这个文件中包涵ERROR字符串的行数。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;Map&amp;lt;String, Long&amp;gt; result = new HashMap&amp;lt;String, Long&amp;gt;();
-if (filePaths != null) {
-	for (String path : filePaths) {
-		result.put(path, sc.textFile(path).filter(new Function&amp;lt;String, Boolean&amp;gt;() {
-
-			public Boolean call(String line) throws Exception {
-				return line.contains(&quot;ERROR&quot;);
-			}
-			
-		}).count());
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;将results中的数据写入mysql中&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;/**
- * 将结果写入mysql中
- * @param result
- * @throws Exception 
- */
-public static void wirteResultToMysql(Map&amp;lt;String, Long&amp;gt; result) throws Exception {
-    String DBDRIVER = &quot;com.mysql.jdbc.Driver&quot;;  
-    //连接地址是由各个数据库生产商单独提供的，所以需要单独记住  
-    String DBURL = &quot;jdbc:mysql://ip:3306/test&quot;;  
-    //连接数据库的用户名  
-    String DBUSER = &quot;root&quot;;  
-    //连接数据库的密码  
-    String DBPASS = &quot;root&quot;;
-    Connection con = null; //表示数据库的连接对象  
-    PreparedStatement pstmt = null; //表示数据库更新操作  
-    String sql = &quot;insert into aaa values(?,?)&quot;;  
-    Class.forName(DBDRIVER); //1、使用CLASS 类加载驱动程序  
-    con = DriverManager.getConnection(DBURL,DBUSER,DBPASS); //2、连接数据库  
-    pstmt = con.prepareStatement(sql); //使用预处理的方式创建对象  
-    if (result != null) {
-    	for (String str : result.keySet()) {
-    		pstmt.setString(1, str);
-    		pstmt.setLong(2, result.get(str));
-    		pstmt.addBatch();
-    	}
-    }
-    //pstmt.executeUpdate(); //执行SQL 语句，更新数据库  
-    pstmt.executeBatch();
-    pstmt.close();  
-    con.close(); // 4、关闭数据库  
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&quot;section&quot;&gt;总结一下：&lt;/h4&gt;
-
-&lt;p&gt;虽然整个过程比较简单，但通过实际的编码可以更加熟悉spark的api和功能。&lt;/p&gt;
-</description>
-				<pubDate>Sun, 28 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</link>
-				<guid isPermaLink="true">/2015/06/28/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03.html</guid>
 			</item>
 		
 	</channel>
