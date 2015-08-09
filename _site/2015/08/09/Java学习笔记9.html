@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Java学习笔记9</title>
+	
+	<meta name="author" content="wangmin">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy coding
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Java学习笔记9 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   August 
+	   9th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="section">多线程</h4>
+
+<p>进程是系统进行资源分配和调度的一个独立单位。</p>
+
+<p>进程包含以下3个特征：</p>
+
+<ul>
+  <li>独立性：拥有自己的资源与空间</li>
+  <li>动态性：动态执行的过程</li>
+  <li>并发性：可以运行多个进程在一个处理器上，多个进程之间相互不影响</li>
+</ul>
+
+<p>多线程扩展了多进程的概念，使得同一个进程可以同时并发处理多个任务。线程也被称为轻量级的进程。每个进程启动都会启动一个主线程，也可以创建多个辅助的线程。</p>
+
+<p>线程是进程的组成部分，一个进程可以拥有多个线程，一个线程必须有一个父进程。线程可以拥有自己的堆栈，自己的程序计数器和自己的局部变量，但不拥有系统资源，它与父进程的其他线程共享该进程的所有资源。</p>
+
+<p>线程是独立运行的，也是抢占式，一个线程可以创建和撤销另一个线程。</p>
+
+<p><strong>线程的创建和启动</strong></p>
+
+<p>Thread类代表线程，所有的线程都是Thread类的子类或者实例。</p>
+
+<ul>
+  <li>
+    <p>继承Thread类创建线程类</p>
+
+    <ul>
+      <li>定义Thread类的子类，并重写该类的run方法，该run方法就代表了线程需要完成的任务。</li>
+      <li>创建Thread子类的实例。</li>
+      <li>调用对象的start方法来启动线程。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<pre><code>public class Thread1 extends Thread{
+	public void run() {
+		System.out.println(getName() + " hello");
+	}
+	public static void main(String[] args) {
+		new Thread1().start();
+	}
+}
+
+* Thread.currentThread() currentThread()是Thread类的静态方法，该方法总是返回当前正在执行的线程对象。
+* getName() 该方法是Thread类的实例方法，该方法返回调用该方法的线程名字。
+* 程序也可以通过使用setName(String name)方法为线程设置名字。
+</code></pre>
+
+<ul>
+  <li>
+    <p>实现Runnable接口创建线程类</p>
+
+    <ul>
+      <li>定义Runnable接口的实现类，并重写run方法</li>
+      <li>创建Runnable实现类的实例，并把该对象作为参数传给Thread创建Thread对象(如果启动多个线程，可以同时使用同一个Runnable实例)</li>
+      <li>调用Thread对象的start()方法来启动线程。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<pre><code>public class Thread2 implements Runnable{
+	public void run() {
+		System.out.println(Thread.currentThread().getName() + " hello");
+	}
+	public static void main(String[] args) {
+		Thread2 thread2 = new Thread2();
+		new Thread(thread2).start();
+		new Thread(thread2).start();
+	}
+}
+</code></pre>
+
+<ul>
+  <li>
+    <p>使用Callable 和 Future 创建线程</p>
+
+    <p>Java 5开始，Java提供了Callable接口，该接口提供了一个call方法可以作为线程执行体。但是call方法比run方法功能更加强大。
+  * call方法可以有返回值
+  * call方法可以声明抛出异常</p>
+
+    <p>创建并启动有返回值的线程步骤如下：</p>
+
+    <ul>
+      <li>创建Callable接口的实现类，并实现call方法，该call方法将作为线程执行体，且该call方法有返回值</li>
+      <li>创建callable实现类的实例，使用FutureTask类来包装Callable对象，该FutureTask对象封装了该Callable对象的call方法的返回值。</li>
+      <li>使用FutureTask对象作为Thread对象的target创建并茄冬新线程</li>
+      <li>调用FutureTask对象的get方法来获得子线程执行结束后的返回值。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr />
+
+<pre><code>public class Thread3 implements Callable&lt;Integer&gt;{
+	public static void main(String[] args) {
+		Thread3 thread3 = new Thread3();
+		FutureTask&lt;Integer&gt; task = new FutureTask&lt;Integer&gt;(thread3);
+		new Thread(task).start();
+	}
+	@Override
+	public Integer call() throws Exception {
+		System.out.println(Thread.currentThread().getName());
+		return 10;
+	}
+}
+</code></pre>
+
+<p><strong>线程的生命周期</strong></p>
+
+<p>线程的生命周期中包括： 新建、就绪、运行、阻塞和死亡。
+					   new Thread/start/…/…/…</p>
+
+<p>线程死亡有以下三种状态：</p>
+
+<ul>
+  <li>run()或call()方法执行完成，线程正常结束</li>
+  <li>线程抛出一个未捕获的Exception 或 Error</li>
+  <li>直接调用线程的stop方法来结束该线程，该方法容易导致死锁，通常不推荐。</li>
+</ul>
+
+<p>不要对处于死亡状态的线程调用start方法，程序只能对新建状态的线程调用start方法，对新建的线程两次调用start方法也是错误的，这都会引发IllegalThreadStateExcpetion异常。</p>
+
+<p><strong>控制线程</strong></p>
+
+<ul>
+  <li>join线程，Thread提供了让一个线程等待另一个线程完成的方法–join方法。当在某个程序执行流中调用其他线程的join()方法时，调用线程将被阻塞。知道被join方法加入的join线程执行完为止。</li>
+</ul>
+
+<hr />
+
+<pre><code>public class Thread4 extends Thread {
+	public Thread4(String name) {
+		super(name);
+	}
+	public void run() {
+		for (int i = 0; i &lt; 100; i++) {
+			System.out.println(getName() + "  " + i);
+		}
+	}
+	public static void main(String[] args) throws InterruptedException {
+		// 启动子进程
+		new Thread4("new thread").start();
+		for (int i = 0; i &lt; 100; i++) {
+			if (i == 20) {
+				Thread4 th = new Thread4("joined thread");
+				th.start();
+				th.join();
+			}
+			System.out.println(Thread.currentThread().getName() + "  " + i);
+		}
+	}
+}
+
+
+上面程序一共有三个线程，主线程调用了th.join()，则表示主线程要等待th线程执行完之后才开始执行main线程
+
+join方法还存在另一种为： join(long millis) 等待join的线程的时间最长为millis毫秒。如果在millis毫秒内被join的线程还没有执行结束，则不再等待。
+</code></pre>
+
+<p><strong>线程同步</strong></p>
+
+<p>为了解决多个线程针对同一代码的调用而引起的操作异常，可以使用同步监视器来解决这个问题，使用同步监视器的通用方法就是同步代码块，同步代码块的语法格式如下：</p>
+
+<p>```
+sychronized(obj) {</p>
+
+<p>}
+```
+任何时刻只有一个线程可以获得对同步监视器的锁定，当同步代码块执行完成后，该线程会释放对该同步监视器的锁定。</p>
+
+<p>虽然可以是使用任何对象作为同步监视器，但是通常推荐使用可能被并发访问的共享资源充当同步监视器。</p>
+
+<p>与同步代码块对应的是，Java多线程安全还支持提供同步方法，同步方法就是使用sychronized关键字来修饰某个方法，则该方法称为同步方法。对于同步方法而言无需显示指定同步监视器，同步方法的同步监视器就是this，也就是该对象本身。使用方法如下：</p>
+
+<p>```
+public sychronized void draw() {</p>
+
+<p>}
+```</p>
+
+<p>sychronized 关键字可以修饰方法，可以修饰代码块，但不能修饰构造器和属性。</p>
+
+<p>JDK提供的StringBuilder 和 StringBuffer两个类，前者就是线程不安全的，后者是线程安全类。前者的性能和效率高些，后者性能和效率低些。</p>
+
+<ul>
+  <li>在当前线程调用wait方法后，该线程会释放同步监视器</li>
+  <li>在当前线程调用Thread.sleep()  和 Thread.yield()方法来暂停当前线程的执行是不会释放同步监视器。</li>
+  <li>线程执行同步代码块时，其他线程调用了该线程的suspend方法将该线程挂起，该线程不会释放同步监视器。</li>
+</ul>
+
+<p>使用同步锁(Lock)来同步线程：</p>
+
+<p>Lock 提供了比sychronized方法和synchronized代码块更为广泛的锁定操作，Lock实现允许更加灵活的结构。它提供了ReadWriteLock(读写锁）和Lock两个根接口，并为Lock提供了ReentrantLock（可重入锁
+）实现类。为ReadWriteLock提供了ReentrantReadWriteLock实现类。实现代码如下：</p>
+
+<hr />
+
+<pre><code>class X {
+	private final ReentrantLock lock = new ReentrantLock();
+	public void m() {
+		// 加锁
+		lock.lock();
+		try {
+		....
+		}
+		// 使用finally 块来保证释放锁
+		finally {
+			lock.unlock();
+		}
+	}
+}
+</code></pre>
+
+<p>当两个线程相互等待对方释放同步监视器就会发生死锁，Java虚拟机没有监测，也没有采取措施处理死锁情况。所以多线程编程时应该采取措施避免死锁的出现。</p>
+
+<p><strong>线程通信</strong></p>
+
+<p>程序是无法控制线程的调度的，如果要实现两个线程同时交替执行，不能一个线程连续执行两次，这种线程同步方式，可以借助于Object类提供的wait() notify() 和 notifyAll() 3个方法，这三个方法是属于Object类自带方法，但是这三个方法必须由同步监视器对象来调用。</p>
+
+<ul>
+  <li>对于使用sychronized修饰的同步方法，this就是同步监视器，所以可以在同步方法中直接调用这3个方法</li>
+  <li>对于使用sychronized修饰的同步代码块，同步监视器是synchronized后括号中的对象，由这个对象来调用这三个同步方法。</li>
+</ul>
+
+<p>关于这三个方法的解释如下：</p>
+
+<ul>
+  <li>wait(): 导致线程等待，有三种形式：一种是无时间参数的wait，一种是带毫秒的，另一种是带微妙的。</li>
+  <li>notify(): 唤醒在此同步监视器上等待的单个线程。如果所有线程都在此同步监视器上等待，则会选择其中的一个，这个是随机选择的。</li>
+  <li>nofifyAll()：唤醒。。。。。。。。。。所有线程。</li>
+</ul>
+
+<p>如果使用Lock来同步代码，这样的话没有同步监视器，这样java提供了一个Condition，Lock替代了同步方法或同步代码块，Condition替代了同步监视器的功能。</p>
+
+<p>Condition实例被绑定在一个Lock对象上，要获得特定Lock实例的Condition实例，调用Lock对象的newCondition()方法即可。提供了如下三个方法：</p>
+
+<ul>
+  <li>await() –  &gt; wait</li>
+  <li>signal() – &gt; notify()</li>
+  <li>signalAll() – &gt; notifyAll()</li>
+</ul>
+
+<p><strong>线程池</strong></p>
+
+<p>系统启动一个新线程的成本很高，在这种情形下，需要使用线程池来提高性能。</p>
+
+<p>Java 5新增了一个Executors工厂类来产生线程池，该工厂类包含如下的几个方法：</p>
+
+<ul>
+  <li>newCachedThreadPool()，创建一个具有缓存功能的线程池，系统根据需要创建线程的个数，这些线程将会被缓存在线程池中</li>
+  <li>newFixedThreadPool(int nThread), 创建一个可重用的，具有固定线程数的线程池。</li>
+  <li>newSingleThreadPool()创建一个只具有单线程的线程池，它相当于调用newFixedThreadPool(1),传入的参数为1</li>
+  <li>newScheduledThreadPool(int corePoolSize)创建具有指定线程数的线程池，它可以在指定延迟后执行线程任务。</li>
+</ul>
+
+<p>前面三个方法是返回一个ExecutorService的对象，该对象提供了submit的方法来提交一个线程。</p>
+
+<pre><code>class MyThread implements Runnable {
+
+	public void run() {
+		....
+	}
+
+}
+
+public class ThreadPoolTest {
+	public stati void main(String[] args) {
+	
+		ExecutorService pool = Executors.newFixedThreadPool(6);
+		pool.submit(new MyThread());
+		pool.submit(new MyThread());
+		pool.shutdown();
+	}
+
+}
+</code></pre>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Java学习笔记9&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B08.html" title="Java学习笔记8">&larr; Previous</a></li>
+		  
+		  
+			<li class="next disabled"><a>Next &rarr;</a>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+

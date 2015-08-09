@@ -7,6 +7,645 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java学习笔记9</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;多线程&lt;/h4&gt;
+
+&lt;p&gt;进程是系统进行资源分配和调度的一个独立单位。&lt;/p&gt;
+
+&lt;p&gt;进程包含以下3个特征：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;独立性：拥有自己的资源与空间&lt;/li&gt;
+  &lt;li&gt;动态性：动态执行的过程&lt;/li&gt;
+  &lt;li&gt;并发性：可以运行多个进程在一个处理器上，多个进程之间相互不影响&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;多线程扩展了多进程的概念，使得同一个进程可以同时并发处理多个任务。线程也被称为轻量级的进程。每个进程启动都会启动一个主线程，也可以创建多个辅助的线程。&lt;/p&gt;
+
+&lt;p&gt;线程是进程的组成部分，一个进程可以拥有多个线程，一个线程必须有一个父进程。线程可以拥有自己的堆栈，自己的程序计数器和自己的局部变量，但不拥有系统资源，它与父进程的其他线程共享该进程的所有资源。&lt;/p&gt;
+
+&lt;p&gt;线程是独立运行的，也是抢占式，一个线程可以创建和撤销另一个线程。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;线程的创建和启动&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Thread类代表线程，所有的线程都是Thread类的子类或者实例。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;继承Thread类创建线程类&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;定义Thread类的子类，并重写该类的run方法，该run方法就代表了线程需要完成的任务。&lt;/li&gt;
+      &lt;li&gt;创建Thread子类的实例。&lt;/li&gt;
+      &lt;li&gt;调用对象的start方法来启动线程。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Thread1 extends Thread{
+	public void run() {
+		System.out.println(getName() + &quot; hello&quot;);
+	}
+	public static void main(String[] args) {
+		new Thread1().start();
+	}
+}
+
+* Thread.currentThread() currentThread()是Thread类的静态方法，该方法总是返回当前正在执行的线程对象。
+* getName() 该方法是Thread类的实例方法，该方法返回调用该方法的线程名字。
+* 程序也可以通过使用setName(String name)方法为线程设置名字。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;实现Runnable接口创建线程类&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;定义Runnable接口的实现类，并重写run方法&lt;/li&gt;
+      &lt;li&gt;创建Runnable实现类的实例，并把该对象作为参数传给Thread创建Thread对象(如果启动多个线程，可以同时使用同一个Runnable实例)&lt;/li&gt;
+      &lt;li&gt;调用Thread对象的start()方法来启动线程。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Thread2 implements Runnable{
+	public void run() {
+		System.out.println(Thread.currentThread().getName() + &quot; hello&quot;);
+	}
+	public static void main(String[] args) {
+		Thread2 thread2 = new Thread2();
+		new Thread(thread2).start();
+		new Thread(thread2).start();
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;使用Callable 和 Future 创建线程&lt;/p&gt;
+
+    &lt;p&gt;Java 5开始，Java提供了Callable接口，该接口提供了一个call方法可以作为线程执行体。但是call方法比run方法功能更加强大。
+  * call方法可以有返回值
+  * call方法可以声明抛出异常&lt;/p&gt;
+
+    &lt;p&gt;创建并启动有返回值的线程步骤如下：&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;创建Callable接口的实现类，并实现call方法，该call方法将作为线程执行体，且该call方法有返回值&lt;/li&gt;
+      &lt;li&gt;创建callable实现类的实例，使用FutureTask类来包装Callable对象，该FutureTask对象封装了该Callable对象的call方法的返回值。&lt;/li&gt;
+      &lt;li&gt;使用FutureTask对象作为Thread对象的target创建并茄冬新线程&lt;/li&gt;
+      &lt;li&gt;调用FutureTask对象的get方法来获得子线程执行结束后的返回值。&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Thread3 implements Callable&amp;lt;Integer&amp;gt;{
+	public static void main(String[] args) {
+		Thread3 thread3 = new Thread3();
+		FutureTask&amp;lt;Integer&amp;gt; task = new FutureTask&amp;lt;Integer&amp;gt;(thread3);
+		new Thread(task).start();
+	}
+	@Override
+	public Integer call() throws Exception {
+		System.out.println(Thread.currentThread().getName());
+		return 10;
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;线程的生命周期&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;线程的生命周期中包括： 新建、就绪、运行、阻塞和死亡。
+					   new Thread/start/…/…/…&lt;/p&gt;
+
+&lt;p&gt;线程死亡有以下三种状态：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;run()或call()方法执行完成，线程正常结束&lt;/li&gt;
+  &lt;li&gt;线程抛出一个未捕获的Exception 或 Error&lt;/li&gt;
+  &lt;li&gt;直接调用线程的stop方法来结束该线程，该方法容易导致死锁，通常不推荐。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;不要对处于死亡状态的线程调用start方法，程序只能对新建状态的线程调用start方法，对新建的线程两次调用start方法也是错误的，这都会引发IllegalThreadStateExcpetion异常。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;控制线程&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;join线程，Thread提供了让一个线程等待另一个线程完成的方法–join方法。当在某个程序执行流中调用其他线程的join()方法时，调用线程将被阻塞。知道被join方法加入的join线程执行完为止。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;public class Thread4 extends Thread {
+	public Thread4(String name) {
+		super(name);
+	}
+	public void run() {
+		for (int i = 0; i &amp;lt; 100; i++) {
+			System.out.println(getName() + &quot;  &quot; + i);
+		}
+	}
+	public static void main(String[] args) throws InterruptedException {
+		// 启动子进程
+		new Thread4(&quot;new thread&quot;).start();
+		for (int i = 0; i &amp;lt; 100; i++) {
+			if (i == 20) {
+				Thread4 th = new Thread4(&quot;joined thread&quot;);
+				th.start();
+				th.join();
+			}
+			System.out.println(Thread.currentThread().getName() + &quot;  &quot; + i);
+		}
+	}
+}
+
+
+上面程序一共有三个线程，主线程调用了th.join()，则表示主线程要等待th线程执行完之后才开始执行main线程
+
+join方法还存在另一种为： join(long millis) 等待join的线程的时间最长为millis毫秒。如果在millis毫秒内被join的线程还没有执行结束，则不再等待。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;线程同步&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;为了解决多个线程针对同一代码的调用而引起的操作异常，可以使用同步监视器来解决这个问题，使用同步监视器的通用方法就是同步代码块，同步代码块的语法格式如下：&lt;/p&gt;
+
+&lt;p&gt;```
+sychronized(obj) {&lt;/p&gt;
+
+&lt;p&gt;}
+```
+任何时刻只有一个线程可以获得对同步监视器的锁定，当同步代码块执行完成后，该线程会释放对该同步监视器的锁定。&lt;/p&gt;
+
+&lt;p&gt;虽然可以是使用任何对象作为同步监视器，但是通常推荐使用可能被并发访问的共享资源充当同步监视器。&lt;/p&gt;
+
+&lt;p&gt;与同步代码块对应的是，Java多线程安全还支持提供同步方法，同步方法就是使用sychronized关键字来修饰某个方法，则该方法称为同步方法。对于同步方法而言无需显示指定同步监视器，同步方法的同步监视器就是this，也就是该对象本身。使用方法如下：&lt;/p&gt;
+
+&lt;p&gt;```
+public sychronized void draw() {&lt;/p&gt;
+
+&lt;p&gt;}
+```&lt;/p&gt;
+
+&lt;p&gt;sychronized 关键字可以修饰方法，可以修饰代码块，但不能修饰构造器和属性。&lt;/p&gt;
+
+&lt;p&gt;JDK提供的StringBuilder 和 StringBuffer两个类，前者就是线程不安全的，后者是线程安全类。前者的性能和效率高些，后者性能和效率低些。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在当前线程调用wait方法后，该线程会释放同步监视器&lt;/li&gt;
+  &lt;li&gt;在当前线程调用Thread.sleep()  和 Thread.yield()方法来暂停当前线程的执行是不会释放同步监视器。&lt;/li&gt;
+  &lt;li&gt;线程执行同步代码块时，其他线程调用了该线程的suspend方法将该线程挂起，该线程不会释放同步监视器。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;使用同步锁(Lock)来同步线程：&lt;/p&gt;
+
+&lt;p&gt;Lock 提供了比sychronized方法和synchronized代码块更为广泛的锁定操作，Lock实现允许更加灵活的结构。它提供了ReadWriteLock(读写锁）和Lock两个根接口，并为Lock提供了ReentrantLock（可重入锁
+）实现类。为ReadWriteLock提供了ReentrantReadWriteLock实现类。实现代码如下：&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;pre&gt;&lt;code&gt;class X {
+	private final ReentrantLock lock = new ReentrantLock();
+	public void m() {
+		// 加锁
+		lock.lock();
+		try {
+		....
+		}
+		// 使用finally 块来保证释放锁
+		finally {
+			lock.unlock();
+		}
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当两个线程相互等待对方释放同步监视器就会发生死锁，Java虚拟机没有监测，也没有采取措施处理死锁情况。所以多线程编程时应该采取措施避免死锁的出现。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;线程通信&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;程序是无法控制线程的调度的，如果要实现两个线程同时交替执行，不能一个线程连续执行两次，这种线程同步方式，可以借助于Object类提供的wait() notify() 和 notifyAll() 3个方法，这三个方法是属于Object类自带方法，但是这三个方法必须由同步监视器对象来调用。&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;对于使用sychronized修饰的同步方法，this就是同步监视器，所以可以在同步方法中直接调用这3个方法&lt;/li&gt;
+  &lt;li&gt;对于使用sychronized修饰的同步代码块，同步监视器是synchronized后括号中的对象，由这个对象来调用这三个同步方法。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;关于这三个方法的解释如下：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;wait(): 导致线程等待，有三种形式：一种是无时间参数的wait，一种是带毫秒的，另一种是带微妙的。&lt;/li&gt;
+  &lt;li&gt;notify(): 唤醒在此同步监视器上等待的单个线程。如果所有线程都在此同步监视器上等待，则会选择其中的一个，这个是随机选择的。&lt;/li&gt;
+  &lt;li&gt;nofifyAll()：唤醒。。。。。。。。。。所有线程。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;如果使用Lock来同步代码，这样的话没有同步监视器，这样java提供了一个Condition，Lock替代了同步方法或同步代码块，Condition替代了同步监视器的功能。&lt;/p&gt;
+
+&lt;p&gt;Condition实例被绑定在一个Lock对象上，要获得特定Lock实例的Condition实例，调用Lock对象的newCondition()方法即可。提供了如下三个方法：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;await() –  &amp;gt; wait&lt;/li&gt;
+  &lt;li&gt;signal() – &amp;gt; notify()&lt;/li&gt;
+  &lt;li&gt;signalAll() – &amp;gt; notifyAll()&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;线程池&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;系统启动一个新线程的成本很高，在这种情形下，需要使用线程池来提高性能。&lt;/p&gt;
+
+&lt;p&gt;Java 5新增了一个Executors工厂类来产生线程池，该工厂类包含如下的几个方法：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;newCachedThreadPool()，创建一个具有缓存功能的线程池，系统根据需要创建线程的个数，这些线程将会被缓存在线程池中&lt;/li&gt;
+  &lt;li&gt;newFixedThreadPool(int nThread), 创建一个可重用的，具有固定线程数的线程池。&lt;/li&gt;
+  &lt;li&gt;newSingleThreadPool()创建一个只具有单线程的线程池，它相当于调用newFixedThreadPool(1),传入的参数为1&lt;/li&gt;
+  &lt;li&gt;newScheduledThreadPool(int corePoolSize)创建具有指定线程数的线程池，它可以在指定延迟后执行线程任务。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前面三个方法是返回一个ExecutorService的对象，该对象提供了submit的方法来提交一个线程。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;class MyThread implements Runnable {
+
+	public void run() {
+		....
+	}
+
+}
+
+public class ThreadPoolTest {
+	public stati void main(String[] args) {
+	
+		ExecutorService pool = Executors.newFixedThreadPool(6);
+		pool.submit(new MyThread());
+		pool.submit(new MyThread());
+		pool.shutdown();
+	}
+
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+				<pubDate>Sun, 09 Aug 2015 00:00:00 +0800</pubDate>
+				<link>/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B09.html</link>
+				<guid isPermaLink="true">/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B09.html</guid>
+			</item>
+		
+			<item>
+				<title>Java学习笔记8</title>
+				<description>&lt;h4 id=&quot;java&quot;&gt;Java输入输出&lt;/h4&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;File类代表java.io包下操作文件或者目录的类。&lt;/p&gt;
+
+&lt;p&gt;File类的list方法中可以接受一个FilenameFilter参数，通过该参数可以只列出符合条件的文件。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;strong&gt;JavaIO流&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;流的分类：&lt;/p&gt;
+
+&lt;p&gt;按照输入与输出分类：
+&lt;strong&gt;输入流和输出流：&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;InputStream &amp;amp;&amp;amp; Reader 作为输入流的基类&lt;/li&gt;
+  &lt;li&gt;OutputStream &amp;amp;&amp;amp; Writer 作为输出流的基类&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;他们都是一些抽象基类，无法直接创建对象。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;还可以分成字节流和字符流&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;InputStream &amp;amp;&amp;amp; OutputStream 是字节流&lt;/li&gt;
+  &lt;li&gt;Reader &amp;amp;&amp;amp; Writer 是字符流&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;字节流和字符流&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;InputStream &amp;amp;&amp;amp; Reader 都代表输入流，只不过前者是字节输入流后者是字符输入流。两者提供的方法都很类似：&lt;/p&gt;
+
+&lt;p&gt;InputStream提供的方法：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;int read() 读取一个字节，并返回该字节&lt;/li&gt;
+  &lt;li&gt;int read(byte[] b) 读取b.length个字节放在b中，返回实际读取的字节数&lt;/li&gt;
+  &lt;li&gt;int read(byte[] b, int off, int len) 读取len长度的数据放入以off开头的b数组中。返回实际读取的字节数。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Reader提供的方法：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;int read() 读取一个字符，并返回该字符&lt;/li&gt;
+  &lt;li&gt;int read(char[] buff) 同上&lt;/li&gt;
+  &lt;li&gt;int read(char[] buff, int off, int len) 同上&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;由于InputStream &amp;amp;&amp;amp; Reader都是字节流，是抽象基类，不能创建实例，但是其对对应的FileInputStream 和 FileReader都是操作文件的。&lt;/p&gt;
+
+&lt;p&gt;OutputStream  &amp;amp;&amp;amp; Writer 同上&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;void write(int c)&lt;/li&gt;
+  &lt;li&gt;void write(byte[]/char[] buff)&lt;/li&gt;
+  &lt;li&gt;void write(byte[]/char[] buff, int off, int len)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;在使用输入输出流的时候不要忘记关闭流。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;节点流在处理流的时候比较麻烦，一般都是使用包装流将节点流包装成处理流，这样就可以方便的使用。比如使用PrintStream来包装OutputStream。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FileOutputStream fos = new FileOutputStream(&quot;test.txt&quot;);
+PrintStream ps = new PrintStream(fos);
+ps.println(&quot;hello this is a test&quot;);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;在最后关闭流的时候，首先应该关闭处理流，然后再关闭节点流。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;因此进行输入输出的内容是文本内容，则应该考虑使用字符流，如果进行输入输出的内容是二进制内容，则应该考虑的是使用字节流。&lt;/p&gt;
+
+&lt;p&gt;同时java还提供了两个转换流，将字节流转换成字符流，InputStreamReader 将字节输入流转换成字符输入流，OutputStreamWriter将字节输出流转成字符输出流。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;RandomAccessFile&lt;/strong&gt; 它支持随机访问，它可以跳转到程序的任意位置进行读写。因此可以在文件的末尾追加文件内容。&lt;/p&gt;
+
+&lt;p&gt;long getFilePointer() 返回文件记录指针的当前位置
+void seek(long pos)将文件记录指针定位到pos位置。&lt;/p&gt;
+</description>
+				<pubDate>Sun, 09 Aug 2015 00:00:00 +0800</pubDate>
+				<link>/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B08.html</link>
+				<guid isPermaLink="true">/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B08.html</guid>
+			</item>
+		
+			<item>
+				<title>Hive学习笔记2</title>
+				<description>&lt;h4 id=&quot;hive2&quot;&gt;Hive学习2&lt;/h4&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive 的数据导入： 可以使用Load命令导入，也可以使用Sqoop组件导入数据。&lt;/p&gt;
+
+&lt;p&gt;Hive不支持insert插入单条语句&lt;/p&gt;
+
+&lt;p&gt;Hive的数据查询 &lt;/p&gt;
+
+&lt;p&gt;Hive的Java客户端和自定义函数&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive执行load导入数据。&lt;/p&gt;
+
+&lt;p&gt;load data local inpath ‘/root/data/student01.txt’ into table t2;&lt;/p&gt;
+
+&lt;p&gt;local 表示数据从本地操作系统中导入。如果不写local表示从hdfs中导入。&lt;/p&gt;
+
+&lt;p&gt;local data local inpath ‘/root/data/student02.txt’ into table t3;&lt;/p&gt;
+
+&lt;p&gt;将/root/data 下的所有数据导入t3表中，并且覆盖原来的数据
+load data local inpath ‘/root/data/’ overwrite into table t3&lt;/p&gt;
+
+&lt;p&gt;将HDFS中，/input/student01.txt导入到t3
+load data inpath ‘/input/student01.txt’ overwrite into table t3;&lt;/p&gt;
+
+&lt;p&gt;load data local inpath ‘/root/data/data1.txt’ into table partition_table partition (gender=’M’);&lt;/p&gt;
+
+&lt;p&gt;Sqoop 数据的导入和导出&lt;/p&gt;
+
+&lt;p&gt;关于sqoop的导入和导出很简单，直接下载压缩包，然后解压，设置两个环境变量就可以。&lt;/p&gt;
+
+&lt;p&gt;设置第一个环境变量：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;export HADOOP_COMMON_HOME=….(hadoop的安装目录）&lt;/li&gt;
+  &lt;li&gt;export HADOOP_MAPRED_HOME=….(MapReduce的目录，这个目录和hadoop目录一般一样)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用Sqoop导入Oracle数据到HDFS中&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp –columns ‘empno, ename, job, sal, deptno’ -m 1 –target-dir ‘/sqoop/emp’&lt;/p&gt;
+
+&lt;p&gt;但是这样指向会报错，因为需要jdbc驱动，需要把oracle的jdbc传入到sqoop的lib目录下。&lt;/p&gt;
+
+&lt;p&gt;这样就会成功执行sqoop的数据导入和导出，整个执行过程就是通过MapReduce来完成的，&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用sqoop导入oracle数据到Hive中&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用sqoop导入oracle数据到Hive中，并且指定表名&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’ –hive-table emp1&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用sqoop导入oracle数据到hive表中，并使用where条件&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’ –hive-table emp1 –where ‘DEPTNO=10’&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用sqoop导入oracle数据到hive中，并使用查询语句&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger -m 1 –query ‘SELECT * FROM EMP WHERE SAL&amp;lt;2000 AND $CONDITIONS’ –target-dir ‘/sqoop/emp5’ –hive-table emp5&lt;/p&gt;
+
+&lt;p&gt;这里需要注意的是$CONDITIONS&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;使用sqoop将hive中的数据导出到oracle数据库中。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;./sqoop export –connect jdbc:oracle:thin:@192.18/56.101:1521:orcl –username soctt –password tiger -m 1 –table MYEMP –export-dir …..&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive的数据查询&lt;/p&gt;
+
+&lt;p&gt;在hive中进行数据操作的时候，总是将查询转换成一个MapReduce任务进行执行，但是对于简单的任务是没有必要转成一个MapReduce任务执行的，这个时候就可以配置一个fetch task功能，让fetch task功能支持简单的数据的操作。&lt;/p&gt;
+
+&lt;p&gt;配置方式有以下几种：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;在hive的命令提示符下面执行：set hive.fetch.task.conversion=more;&lt;/li&gt;
+  &lt;li&gt;在启动hive命令提示符的时候，加一个参数也可以开启这个功能：hive –hiveconf hive.fetch.task.conversion=more&lt;/li&gt;
+  &lt;li&gt;修改hive-site.xml文件&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前两种方式都可以配置这个功能，但是这种配置都是临时的。可以修改hive-site.xml文件使其永久有效。&lt;/p&gt;
+
+&lt;p&gt;修改hive-site.xml文件，加一行属性：&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;property&amp;gt;
+	&amp;lt;name&amp;gt;hive.fetch.task.conversion&amp;lt;/name&amp;gt;
+	&amp;lt;value&amp;gt;more&amp;lt;/value&amp;gt;
+&amp;lt;/property&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive的函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;内置函数&lt;/li&gt;
+  &lt;li&gt;自定义函数&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;数学函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;round 四舍五入&lt;/li&gt;
+  &lt;li&gt;ceil 向上取整&lt;/li&gt;
+  &lt;li&gt;floor 向下取整&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;select round(45.926, 2); 45.926保留两位小数，最终结果是45.93&lt;/p&gt;
+
+&lt;p&gt;字符函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;lower&lt;/li&gt;
+  &lt;li&gt;upper&lt;/li&gt;
+  &lt;li&gt;length&lt;/li&gt;
+  &lt;li&gt;concat&lt;/li&gt;
+  &lt;li&gt;substr&lt;/li&gt;
+  &lt;li&gt;trim&lt;/li&gt;
+  &lt;li&gt;lpad&lt;/li&gt;
+  &lt;li&gt;rpad&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;select lower(‘Hello WORLD’), upper(‘hhhh’)
+select length(‘HelloWorld’)
+….&lt;/p&gt;
+
+&lt;p&gt;lpad:左填充
+rpad:右填充&lt;/p&gt;
+
+&lt;p&gt;select lpad(‘abcd’, 10, ‘&lt;em&gt;’), rpad(‘abcd’, 10, ‘&lt;/em&gt;’)&lt;/p&gt;
+
+&lt;p&gt;收集函数&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;size&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;size(map(&amp;lt;key, value&amp;gt;, &amp;lt;key, value&amp;gt;));&lt;/p&gt;
+
+&lt;p&gt;转换函数&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;cast&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;select cast(1 as bigint);
+select cast(‘2015-08-10’ as date);&lt;/p&gt;
+
+&lt;p&gt;日期函数&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;to_date&lt;/li&gt;
+  &lt;li&gt;year&lt;/li&gt;
+  &lt;li&gt;month&lt;/li&gt;
+  &lt;li&gt;day&lt;/li&gt;
+  &lt;li&gt;weekofyear&lt;/li&gt;
+  &lt;li&gt;datediff&lt;/li&gt;
+  &lt;li&gt;date_add&lt;/li&gt;
+  &lt;li&gt;date_sub&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;条件函数&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;coalesce：从左到右返回第一个不为null的值&lt;/li&gt;
+  &lt;li&gt;case … when … : 条件表达式&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;聚合函数：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;count&lt;/li&gt;
+  &lt;li&gt;sum&lt;/li&gt;
+  &lt;li&gt;min&lt;/li&gt;
+  &lt;li&gt;max&lt;/li&gt;
+  &lt;li&gt;avg&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;表生成函数&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;explode&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive的表连接&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;等值连接&lt;/li&gt;
+  &lt;li&gt;不等值连接&lt;/li&gt;
+  &lt;li&gt;外连接&lt;/li&gt;
+  &lt;li&gt;自连接&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;等值连接：&lt;/p&gt;
+
+&lt;p&gt;select e.empno, e.ename, e.sal, e.dname from emp e, dept d where e.deptno=d.deptno;&lt;/p&gt;
+
+&lt;p&gt;不等值连接：&lt;/p&gt;
+
+&lt;p&gt;外连接：&lt;/p&gt;
+
+&lt;p&gt;通过外连接可以将对于连接条件不成立的记录任然包含在最后的结果中：其中分成：&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;左外连接&lt;/li&gt;
+  &lt;li&gt;右外连接&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive的子查询：&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Hive的java客户端操作：&lt;/p&gt;
+
+&lt;p&gt;首先需要启动Hive远程服务：hive –service hiveserver&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;JDBC&lt;/li&gt;
+  &lt;li&gt;Thrift Client&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hive的JDBC客户端操作&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;获取连接&lt;/li&gt;
+  &lt;li&gt;创建运行环境&lt;/li&gt;
+  &lt;li&gt;执行HQL&lt;/li&gt;
+  &lt;li&gt;处理结果&lt;/li&gt;
+  &lt;li&gt;释放资源&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;hive-jdbc-…jar 这个就是hive的jdbc文件。&lt;/p&gt;
+</description>
+				<pubDate>Sun, 09 Aug 2015 00:00:00 +0800</pubDate>
+				<link>/2015/08/09/Hive%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</link>
+				<guid isPermaLink="true">/2015/08/09/Hive%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02.html</guid>
+			</item>
+		
+			<item>
 				<title>Hive学习笔记1</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;第一部分&lt;/h4&gt;
 
@@ -862,436 +1501,6 @@ public class CalendarTest {
 				<pubDate>Mon, 06 Jul 2015 00:00:00 +0800</pubDate>
 				<link>/2015/07/06/Java%E7%AC%94%E8%AE%B03.html</link>
 				<guid isPermaLink="true">/2015/07/06/Java%E7%AC%94%E8%AE%B03.html</guid>
-			</item>
-		
-			<item>
-				<title>Java学习笔记2</title>
-				<description>&lt;h4 id=&quot;singleton-----&quot;&gt;Singleton / 不可变类 / 缓存不可变类 的实现&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;Singleton（单例类）&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;单例类用的地方很多，如果一个类始终只能创建一个实例，则这个类被称为单例类。&lt;/p&gt;
-
-&lt;p&gt;以下程序是创建一个单例类：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;public class SingletonTest {
-	public static void main(String[] args) {
-		Singleton s1 = Singleton.getInstance();
-		Singleton s2 = Singleton.getInstance();
-		System.out.println(s1 == s2);
-		s1.setName(&quot;Singleton1&quot;);
-		System.out.println(&quot;s1 = &quot; + s1.getName());
-		System.out.println(&quot;s2 = &quot; + s2.getName());
-		s2.setName(&quot;Singleton2&quot;);
-		System.out.println(&quot;s1 = &quot; + s1.getName());
-		System.out.println(&quot;s2 = &quot; + s2.getName());
-	}
-}
-class Singleton {
-	private String name;
-	private static Singleton singleton = new Singleton(&quot;default&quot;);
-	private Singleton(String name) {
-		this.name = name;
-	}
-	public static Singleton getInstance() {
-		return singleton;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getName() {
-		return this.name;
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;不可变类&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;不可变类就是在创建该类的实例后不能更改该类的属性。Java提供的8个包装类和java.lang.String都是不可变类。&lt;/p&gt;
-
-&lt;p&gt;创建不可变类的几个规则：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;使用private 和 final 修饰符修饰属性；&lt;/li&gt;
-  &lt;li&gt;提供带参数的构建起，用于初始化属性值；&lt;/li&gt;
-  &lt;li&gt;只提供getter方法；&lt;/li&gt;
-  &lt;li&gt;重写hashCode 和 equlas方法；&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;/**
- * Person 类是一个不可变类
- * @author wangmin
- *
- */
-public class Person {
-	private final String name;
-	private final int age;
-	public Person() {
-		this.name = &quot;&quot;;
-		this.age = 0;
-	}
-	public Person(String name, int age) {
-		this.name = name;
-		this.age = age;
-	}
-	public String getName() {
-		return this.name;
-	}
-	public int getAge() {
-		return this.age;
-	}
-	public boolean equlas (Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj != null &amp;amp;&amp;amp; obj.getClass() == this.getClass()) {
-			Person p = (Person)obj;
-			if (this.getName().equals(p.getName()) &amp;amp;&amp;amp; this.age == p.getAge()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	public int hasCode() {
-		return name.hashCode() + age;
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;strong&gt;缓存不可变类&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;如果程序经常需要使用相同的不可变类实例，则应该考虑缓存这种不可变类。下面是简单的使用数组的方式实现一个不可变类。&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;pre&gt;&lt;code&gt;/**
- * 使用数组的方式来缓解Person
- * 1. 定义数组大小，并且使用private static 修饰
- * 2. 定义valueOf方法获取对象，但是其中存在以下几种情况：
- * 	2.1 循环遍历整个缓存数组的大小，然后比较，如果已经被缓存则直接取出。（注意数组元素可能为null）
- *  2.2 由2.1的结果可知，如果数组中没有则新创建。
- *  2.3 首次判断pos是否已满，如果已满则将新的对象创建到数组0的位置，并且将pos设置为0，并返回。
- *  2.4 如果没有满则根据pos的位置创建，并返回。
- * @author wangmin
- *
- */
-public class CachePerson {
-	private static int MAX_SIZE = 10;
-	private static CachePerson[] cp = new CachePerson[MAX_SIZE];
-	private String name;
-	private static int pos = 0;
-	
-	public CachePerson() {
-		
-	}
-	public CachePerson(String name) {
-		this.name = name;
-	}
-	public String getName() {
-		return this.name;
-	}
-	public static CachePerson valueOf(String name) {
-		for (int i = 0; i &amp;lt; MAX_SIZE; i++) {
-			if (cp[i] != null &amp;amp;&amp;amp; cp[i].getName().equals(name)) {
-				return cp[i];
-			}
-		}
-		if (pos == MAX_SIZE) {
-			cp[0] = new CachePerson(name);
-			pos = 1;
-		} else {
-			cp[pos++] = new CachePerson(name);
-		}
-		return cp[pos-1];
-	}
-	public boolean equlas (Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj != null &amp;amp;&amp;amp; obj.getClass() == this.getClass()) {
-			CachePerson cp = (CachePerson)obj;
-			if (cp.getName().equals(this.getName())) {
-				return true;
-			}
-		}
-		return false;
-	}
-	public int hasCode() {
-		return name.hashCode();
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-				<pubDate>Sun, 05 Jul 2015 00:00:00 +0800</pubDate>
-				<link>/2015/07/05/Java%E7%AC%94%E8%AE%B02.html</link>
-				<guid isPermaLink="true">/2015/07/05/Java%E7%AC%94%E8%AE%B02.html</guid>
-			</item>
-		
-			<item>
-				<title>Java学习笔记1</title>
-				<description>&lt;h4 id=&quot;tostring----equals-&quot;&gt;toString / == / equals 的使用&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;toString的使用&lt;/strong&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Person p = new Person();
-System.out.println(p);
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;运行上面的程序得到的结果是：Person@f72645&lt;/p&gt;
-
-&lt;p&gt;其实输出这个结果就是调用了对象的toString()方法，也就是其结果和调用：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;System.out.println(p.toString())
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;toString是一个自我描述的方法，一般都是在直接打印该对象的时候，输出该对象的描述信息。要实现这个自我描述方法，需要自己重写toString方法。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;class Person {
-	private String name;
-	private double weight;
-	....
-	publci String toString() {
-		return &quot;name: &quot; + name + &quot;, weight: &quot; + weight;
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;上面的Person类就是重写了toString方法，在打印该对象的时候，就是打印：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;name: xxxx, weight: xxx
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;equlas方法和==的区别&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;判断两个对象是否相等可以使用equals方法，另一种是使用==判断。&lt;/p&gt;
-
-&lt;p&gt;使用 == 判断两个对象是否相等的条件是：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;如果两个对象都是基本类型，那么他们的值相等就返回true&lt;/li&gt;
-  &lt;li&gt;如果非基本类型，则说明他们的引用需要指向同一个对象，这个时候才返回true.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;例如：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;int i = 100;
-float f = 100.0f;
-i == f 返回true
-
-String str1 = new String(&quot;hello&quot;);
-String str2 = new String(&quot;hello&quot;);
-str1 == str2 这个将输出false
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;而equlas是Object提供的一个方法，使用这个方法来判断两个对象是否相等，和使用 == 来判断是一样的效果，但是equlas方法是可以被子自定义的类重写的。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;class Person {
-
-	...
-	
-	public boolean equlas(Object obj) {
-		... 
-		return true;
-	}
-} 在使用equlas比较的时候就会调用自定义的equlas方法，提供一个标准的equlas方法重写的模板：
-
-public boolean equlas(Object obj) {
-
-	if (this == obj) {
-		return true;
-	}
-	if (obj != null  &amp;amp;&amp;amp; obj.getClass() == Person.class) {
-		Person pobj = (Person)obj;
-		if (...) {
-			return true;
-		}
-	}
-	return false;
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Object 默认提供的equlas只是比较对象的地址，即Object类的equlas方法比较的结果与 == 运算符比较的结果是完全相同。因此，在实际运用中需要重写equals，这时候可以根据自己的条件来决定如何判断相等。&lt;/p&gt;
-
-</description>
-				<pubDate>Thu, 02 Jul 2015 00:00:00 +0800</pubDate>
-				<link>/2015/07/02/Java%E7%AC%94%E8%AE%B01.html</link>
-				<guid isPermaLink="true">/2015/07/02/Java%E7%AC%94%E8%AE%B01.html</guid>
-			</item>
-		
-			<item>
-				<title>Spark学习笔记4</title>
-				<description>&lt;h4 id=&quot;standalone&quot;&gt;任务的提交以及Standalone集群模式的部署&lt;/h4&gt;
-
-&lt;h4 id=&quot;spark-submit&quot;&gt;spark-submit&lt;/h4&gt;
-
-&lt;p&gt;首先需要打包代码，如果你的代码需要依赖其他的包环境则需要单独的打包这些依赖，应为cluster会将所有依赖的jar包分发到各个节点上进行使用。推荐的方法是将依赖包和程序都统一的打成一个包，这样就可以直接使用spark-submit方法来运行，具体的pom.xml配置如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;&amp;lt;dependencies&amp;gt;
-	&amp;lt;dependency&amp;gt; &amp;lt;!-- Spark dependency --&amp;gt;
-		&amp;lt;groupId&amp;gt;org.apache.spark&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;spark-core_2.10&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt;
-		&amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt;
-	&amp;lt;/dependency&amp;gt;
-	&amp;lt;dependency&amp;gt;
-		&amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;5.1.13&amp;lt;/version&amp;gt;
-	&amp;lt;/dependency&amp;gt;
-	&amp;lt;dependency&amp;gt;
-		&amp;lt;groupId&amp;gt;org.apache.hadoop&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;hadoop-client&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;2.6.0&amp;lt;/version&amp;gt;
-		&amp;lt;scope&amp;gt;provided&amp;lt;/scope&amp;gt;
-	&amp;lt;/dependency&amp;gt;
-	&amp;lt;dependency&amp;gt;
-		&amp;lt;groupId&amp;gt;junit&amp;lt;/groupId&amp;gt;
-		&amp;lt;artifactId&amp;gt;junit&amp;lt;/artifactId&amp;gt;
-		&amp;lt;version&amp;gt;4.11&amp;lt;/version&amp;gt;
-		&amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt;
-	&amp;lt;/dependency&amp;gt;
-&amp;lt;/dependencies&amp;gt;
-&amp;lt;build&amp;gt;
-	&amp;lt;plugins&amp;gt;
-		&amp;lt;plugin&amp;gt;
-			&amp;lt;groupId&amp;gt;org.apache.maven.plugins&amp;lt;/groupId&amp;gt;
-			&amp;lt;artifactId&amp;gt;maven-compiler-plugin&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;2.3.2&amp;lt;/version&amp;gt;
-			&amp;lt;configuration&amp;gt;
-				&amp;lt;!-- 使用1.7 jdk进行编译 --&amp;gt;
-				&amp;lt;source&amp;gt;1.7&amp;lt;/source&amp;gt;
-				&amp;lt;target&amp;gt;1.7&amp;lt;/target&amp;gt;
-			&amp;lt;/configuration&amp;gt;
-		&amp;lt;/plugin&amp;gt;
-		&amp;lt;plugin&amp;gt;
-			&amp;lt;artifactId&amp;gt;maven-assembly-plugin&amp;lt;/artifactId&amp;gt;
-			&amp;lt;version&amp;gt;2.5.5&amp;lt;/version&amp;gt;
-			&amp;lt;configuration&amp;gt;
-				&amp;lt;descriptorRefs&amp;gt;
-					&amp;lt;descriptorRef&amp;gt;jar-with-dependencies&amp;lt;/descriptorRef&amp;gt;
-				&amp;lt;/descriptorRefs&amp;gt;
-			&amp;lt;/configuration&amp;gt;
-			&amp;lt;executions&amp;gt;
-				&amp;lt;execution&amp;gt;
-					&amp;lt;id&amp;gt;make-assembly&amp;lt;/id&amp;gt;
-					&amp;lt;phase&amp;gt;package&amp;lt;/phase&amp;gt;
-					&amp;lt;goals&amp;gt;
-						&amp;lt;goal&amp;gt;single&amp;lt;/goal&amp;gt;
-					&amp;lt;/goals&amp;gt;
-				&amp;lt;/execution&amp;gt;
-			&amp;lt;/executions&amp;gt;
-		&amp;lt;/plugin&amp;gt;
-	&amp;lt;/plugins&amp;gt;
-&amp;lt;/build&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;spark &amp;amp;&amp;amp; hadoop 的scope值都设置为provided，然后打包的过程是把需要依赖的第三方东西打成一个统一的jar包去运行，使用的是maven-compiler-plugin插件。&lt;/p&gt;
-
-&lt;p&gt;在服务器上提交的命令如下：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;./bin/spark-submit \
-  --class &amp;lt;main-class&amp;gt;
-  --master &amp;lt;master-url&amp;gt; \
-  --deploy-mode &amp;lt;deploy-mode&amp;gt; \
-  --conf &amp;lt;key&amp;gt;=&amp;lt;value&amp;gt; \
-  ... # other options
-  &amp;lt;application-jar&amp;gt; \
-  [application-arguments]
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;spark-submit 可以加载一个配置文件，默认是加载在conf/spark-defaults.conf&lt;/p&gt;
-
-&lt;h4 id=&quot;spark-standalone-mode&quot;&gt;Spark Standalone Mode&lt;/h4&gt;
-
-&lt;p&gt;除了运行在Mesos和YARN集群之外，spark也提供了简单的独立部署模式。可以通过手动的启动master和worker，也可以通过spark提供的启动脚本来启动。独立部署也可以通过运行在一个机器上，进行测试。&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;为了安装你需要放置一个编译好的spark版本到每个机器上。&lt;/li&gt;
-  &lt;li&gt;启动集群有两种方式，一种是手动启动，另一种是通过启动脚本启动。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;手动启动spark集群&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;启动一个独立的master可以使用如下的命令：&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;./sbin/start-master.sh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;一旦启动可以通过访问：http://localhost:8080端口访问master，打出的spark://HOST:PORT 的URL，work节点可以使用这个链接连到master上。&lt;/p&gt;
-
-&lt;p&gt;可以使用如下的命令来使worker节点连接到master上&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;./sbin/start-slave.sh &amp;lt;worker#&amp;gt; &amp;lt;master-spark-URL&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;worker在加入到master后可以访问master的http://localhost:8080，可以清洗的看到被加入的worker节点的信息。&lt;/p&gt;
-
-&lt;p&gt;在启动master和worker的时候可以带上参数进行设置，参数的列表如下:其中比较重要的是：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;-c CORES， 这个是指定多少个cpu分配给spark使用，默认是全部cpu&lt;/li&gt;
-  &lt;li&gt;-m MEM，这个是指定多少的内存分配给spark使用，默认是全部的内存的减去1g的操作系统内存全部分配给spark使用。一般的格式是1000M or 2G&lt;/li&gt;
-  &lt;li&gt;-d DIR, 这个指定spark任务的日志输出目录。&lt;/li&gt;
-  &lt;li&gt;–properties-file FILE 指定spark指定加载的配置文件的路径默认是： conf/spark-defaults.conf&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;脚本方式部署&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;通过spark的部署脚本部署首先需要在spark的主目录下创建一个conf/slaves的文件，这个文件中每一行代表一个worker的hostname.需要注意的是，master访问worker节点是通过SSH访问的，所以需要master通过ssh无密码的登录到worker，否则需要设置一个 SPARK_SSH_FOREGROUND的环境变量，这个变量的值就是每个worker的密码&lt;/p&gt;
-
-&lt;p&gt;然后可以通过spark安装目录下的sbin/….sh文件进行启动，
-如果要启动和停止master和slave可以使用：&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;sbin/start-all.sh&lt;/li&gt;
-  &lt;li&gt;sbin/stop-all.sh&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;注意的是这些脚本必须是在master机器上执行&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;同时你可以通过配置集群的 conf/spark-env.sh文件来进一步配置集群的环境。但是这也文件需要通过拷贝conf/spark-env.sh.template文件来创建，并且需要把这个文件拷贝到所有的worker节点上。&lt;/p&gt;
-
-&lt;p&gt;其中： SPARK_MASTER_OPTS &amp;amp;&amp;amp; SPARK_WORKER_OPTS 两个配置项比较复杂。&lt;/p&gt;
-
-&lt;p&gt;通过在SparkContext构造器中传入spark://IP:PORT这个来启用这个集群。同时可以在交互式的方式启动脚本中使用：./bin/spark-shell –master spark://IP:PORT 来启动集群执行。&lt;/p&gt;
-
-&lt;p&gt;独立部署模式的集群现在只是简单的支持FIFO调度。
-为了允许多个并发用户，可以通过SparkConf设置每个应用程序需要的资源的最大数。默认情况下，它会请求使用集群的全部的核，而这只是同时运行一个应用程序才回有意义。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;val conf = new SparkConf()
-             .setMaster(...)
-             .setAppName(...)
-             .set(&quot;spark.cores.max&quot;, &quot;10&quot;)
-val sc = new SparkContext(conf)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;除了可以在程序中指定你也可以在spark-env.sh中设置默认的值，&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;export SPARK_MASTER_OPTS=&quot;-Dspark.deploy.defaultCores=&amp;lt;value&amp;gt;&quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;spark的高可用设置&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;spark的高可用设置有两种，一种是通过Zookeeper来实现，另一种是通过本地文件系统来实现。&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;使用ZooKeeper备份master，利用zookeeper提供的领导选举和状态保存，你可以让更多的master连接到zookeepre实例。一个将会被选举为leader其他的则会保存备份他的状态。如果master死掉，zookeeper可以选举一个新的leader，整个过程需要1到2分钟的时间，但是这个过程只会对新的任务调度有影响。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有三个配置信息：spark.deploy.recoveryMode/spark.deploy.zookeeper.url/spark.deploy.zookeeper.dir&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;使用本地文件系统来恢复该节点。为了使用这种方式需要的配置项为：SPARK_DAEMON_JAVA_OPTS，这个配置项有两个配置信息：spark.deploy.recoveryMode、spark.deploy.recoveryDirectory&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-</description>
-				<pubDate>Mon, 29 Jun 2015 00:00:00 +0800</pubDate>
-				<link>/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</link>
-				<guid isPermaLink="true">/2015/06/29/Spark%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04.html</guid>
 			</item>
 		
 	</channel>

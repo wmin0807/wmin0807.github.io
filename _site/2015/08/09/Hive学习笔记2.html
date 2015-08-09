@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Hive学习笔记2</title>
+	
+	<meta name="author" content="wangmin">
+
+	<!-- Enable responsive viewport -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Le styles -->
+	<link href="/assets/resources/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/resources/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/assets/resources/syntax/syntax.css" rel="stylesheet">
+	<link href="/assets/css/style.css" rel="stylesheet">
+
+	<!-- Le fav and touch icons -->
+	<!-- Update these with your own images
+	<link rel="shortcut icon" href="images/favicon.ico">
+	<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+	-->
+
+	<link rel="alternate" type="application/rss+xml" title="" href="/feed.xml">
+</head>
+
+<body>
+	<nav class="navbar navbar-default visible-xs" role="navigation">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="http://twitter.com/dbtek">
+				<i class="fa fa-twitter"></i>
+			</a>
+			
+			
+			<a type="button" class="navbar-toggle nav-link" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope"></i>
+			</a>
+			
+			<a class="navbar-brand" href="/">
+				<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=35" class="img-circle" />
+				
+			</a>
+		</div>
+
+		<!-- Collect the nav links, forms, and other content for toggling -->
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="/">Home</a></li>
+				<li><a href="/categories.html">Categories</a></li>
+				<li><a href="/tags.html">Tags</a></li>
+			</ul>
+		</div><!-- /.navbar-collapse -->
+	</nav>
+
+	<!-- nav-menu-dropdown -->
+	<div class="btn-group hidden-xs" id="nav-menu">
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+			<i class="fa fa-bars"></i>
+		</button>
+		<ul class="dropdown-menu" role="menu">
+			<li><a href="/"><i class="fa fa-home"></i>Home</a></li>
+			<!--<li><a href="/categories.html"><i class="fa fa-folder"></i>Categories</a></li>
+			<li><a href="/tags.html"><i class="fa fa-tags"></i>Tags</a></li>
+			<li class="divider"></li>-->
+			<li><a href="#"><i class="fa fa-arrow-up"></i>Top of Page</a></li>
+		</ul>
+	</div>
+
+	<div class="col-sm-3 sidebar hidden-xs">
+		<! -- sidebar.html -->
+<header class="sidebar-header" role="banner">
+	<a href="/">
+		<img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa?s=150" class="img-circle" />
+	</a>
+	<h3 class="title">
+        <a href="/"></a>
+    </h3>
+</header>
+
+
+<div id="bio" class="text-center">
+	enjoy life, enjoy coding
+</div>
+
+
+<div id="contact-list" class="text-center">
+	<ul class="list-unstyled list-inline">
+		
+		
+		<li>
+			<a class="btn btn-default btn-sm" href="mailto:w0807m@163.com">
+				<i class="fa fa-envelope fa-lg"></i>
+			</a>
+		</li>
+		
+	</ul>
+</div>
+<! -- sidebar.html end -->
+
+	</div>
+
+	<div class="col-sm-9 col-sm-offset-3">
+		<div class="page-header">
+  <h1>Hive学习笔记2 </h1>
+</div>
+	
+<article>
+
+	<div class="col-sm-10">
+	 <span class="post-date">
+	   
+	   August 
+	   9th,
+	   
+	   2015
+	 </span>
+	  <div class="article_body">
+	  <h4 id="hive2">Hive学习2</h4>
+
+<hr />
+
+<p>Hive 的数据导入： 可以使用Load命令导入，也可以使用Sqoop组件导入数据。</p>
+
+<p>Hive不支持insert插入单条语句</p>
+
+<p>Hive的数据查询 </p>
+
+<p>Hive的Java客户端和自定义函数</p>
+
+<hr />
+
+<p>Hive执行load导入数据。</p>
+
+<p>load data local inpath ‘/root/data/student01.txt’ into table t2;</p>
+
+<p>local 表示数据从本地操作系统中导入。如果不写local表示从hdfs中导入。</p>
+
+<p>local data local inpath ‘/root/data/student02.txt’ into table t3;</p>
+
+<p>将/root/data 下的所有数据导入t3表中，并且覆盖原来的数据
+load data local inpath ‘/root/data/’ overwrite into table t3</p>
+
+<p>将HDFS中，/input/student01.txt导入到t3
+load data inpath ‘/input/student01.txt’ overwrite into table t3;</p>
+
+<p>load data local inpath ‘/root/data/data1.txt’ into table partition_table partition (gender=’M’);</p>
+
+<p>Sqoop 数据的导入和导出</p>
+
+<p>关于sqoop的导入和导出很简单，直接下载压缩包，然后解压，设置两个环境变量就可以。</p>
+
+<p>设置第一个环境变量：</p>
+
+<ol>
+  <li>export HADOOP_COMMON_HOME=….(hadoop的安装目录）</li>
+  <li>export HADOOP_MAPRED_HOME=….(MapReduce的目录，这个目录和hadoop目录一般一样)</li>
+</ol>
+
+<hr />
+
+<ul>
+  <li>使用Sqoop导入Oracle数据到HDFS中</li>
+</ul>
+
+<p>./sqoop import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp –columns ‘empno, ename, job, sal, deptno’ -m 1 –target-dir ‘/sqoop/emp’</p>
+
+<p>但是这样指向会报错，因为需要jdbc驱动，需要把oracle的jdbc传入到sqoop的lib目录下。</p>
+
+<p>这样就会成功执行sqoop的数据导入和导出，整个执行过程就是通过MapReduce来完成的，</p>
+
+<ul>
+  <li>使用sqoop导入oracle数据到Hive中</li>
+</ul>
+
+<p>./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’</p>
+
+<ul>
+  <li>使用sqoop导入oracle数据到Hive中，并且指定表名</li>
+</ul>
+
+<p>./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’ –hive-table emp1</p>
+
+<ul>
+  <li>使用sqoop导入oracle数据到hive表中，并使用where条件</li>
+</ul>
+
+<p>./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger –table emp -m 1 –columns ‘empno,ename,job,sal,deptno’ –hive-table emp1 –where ‘DEPTNO=10’</p>
+
+<ul>
+  <li>使用sqoop导入oracle数据到hive中，并使用查询语句</li>
+</ul>
+
+<p>./sqoop import –hive-import –connect jdbc:oracle:thin:@192.168.56.101:1521:orcl –username scott –password tiger -m 1 –query ‘SELECT * FROM EMP WHERE SAL&lt;2000 AND $CONDITIONS’ –target-dir ‘/sqoop/emp5’ –hive-table emp5</p>
+
+<p>这里需要注意的是$CONDITIONS</p>
+
+<ul>
+  <li>使用sqoop将hive中的数据导出到oracle数据库中。</li>
+</ul>
+
+<p>./sqoop export –connect jdbc:oracle:thin:@192.18/56.101:1521:orcl –username soctt –password tiger -m 1 –table MYEMP –export-dir …..</p>
+
+<hr />
+
+<p>Hive的数据查询</p>
+
+<p>在hive中进行数据操作的时候，总是将查询转换成一个MapReduce任务进行执行，但是对于简单的任务是没有必要转成一个MapReduce任务执行的，这个时候就可以配置一个fetch task功能，让fetch task功能支持简单的数据的操作。</p>
+
+<p>配置方式有以下几种：</p>
+
+<ul>
+  <li>在hive的命令提示符下面执行：set hive.fetch.task.conversion=more;</li>
+  <li>在启动hive命令提示符的时候，加一个参数也可以开启这个功能：hive –hiveconf hive.fetch.task.conversion=more</li>
+  <li>修改hive-site.xml文件</li>
+</ul>
+
+<p>前两种方式都可以配置这个功能，但是这种配置都是临时的。可以修改hive-site.xml文件使其永久有效。</p>
+
+<p>修改hive-site.xml文件，加一行属性：</p>
+
+<pre><code>&lt;property&gt;
+	&lt;name&gt;hive.fetch.task.conversion&lt;/name&gt;
+	&lt;value&gt;more&lt;/value&gt;
+&lt;/property&gt;
+</code></pre>
+
+<hr />
+
+<p>Hive的函数：</p>
+
+<ul>
+  <li>内置函数</li>
+  <li>自定义函数</li>
+</ul>
+
+<p>数学函数：</p>
+
+<ul>
+  <li>round 四舍五入</li>
+  <li>ceil 向上取整</li>
+  <li>floor 向下取整</li>
+</ul>
+
+<p>select round(45.926, 2); 45.926保留两位小数，最终结果是45.93</p>
+
+<p>字符函数：</p>
+
+<ul>
+  <li>lower</li>
+  <li>upper</li>
+  <li>length</li>
+  <li>concat</li>
+  <li>substr</li>
+  <li>trim</li>
+  <li>lpad</li>
+  <li>rpad</li>
+</ul>
+
+<p>select lower(‘Hello WORLD’), upper(‘hhhh’)
+select length(‘HelloWorld’)
+….</p>
+
+<p>lpad:左填充
+rpad:右填充</p>
+
+<p>select lpad(‘abcd’, 10, ‘<em>’), rpad(‘abcd’, 10, ‘</em>’)</p>
+
+<p>收集函数</p>
+
+<ul>
+  <li>size</li>
+</ul>
+
+<p>size(map(&lt;key, value&gt;, &lt;key, value&gt;));</p>
+
+<p>转换函数</p>
+
+<ul>
+  <li>cast</li>
+</ul>
+
+<p>select cast(1 as bigint);
+select cast(‘2015-08-10’ as date);</p>
+
+<p>日期函数</p>
+
+<ul>
+  <li>to_date</li>
+  <li>year</li>
+  <li>month</li>
+  <li>day</li>
+  <li>weekofyear</li>
+  <li>datediff</li>
+  <li>date_add</li>
+  <li>date_sub</li>
+</ul>
+
+<p>条件函数</p>
+
+<ul>
+  <li>coalesce：从左到右返回第一个不为null的值</li>
+  <li>case … when … : 条件表达式</li>
+</ul>
+
+<p>聚合函数：</p>
+
+<ul>
+  <li>count</li>
+  <li>sum</li>
+  <li>min</li>
+  <li>max</li>
+  <li>avg</li>
+</ul>
+
+<p>表生成函数</p>
+
+<ul>
+  <li>explode</li>
+</ul>
+
+<hr />
+
+<p>Hive的表连接</p>
+
+<ul>
+  <li>等值连接</li>
+  <li>不等值连接</li>
+  <li>外连接</li>
+  <li>自连接</li>
+</ul>
+
+<p>等值连接：</p>
+
+<p>select e.empno, e.ename, e.sal, e.dname from emp e, dept d where e.deptno=d.deptno;</p>
+
+<p>不等值连接：</p>
+
+<p>外连接：</p>
+
+<p>通过外连接可以将对于连接条件不成立的记录任然包含在最后的结果中：其中分成：</p>
+
+<ul>
+  <li>左外连接</li>
+  <li>右外连接</li>
+</ul>
+
+<hr />
+
+<p>Hive的子查询：</p>
+
+<hr />
+
+<p>Hive的java客户端操作：</p>
+
+<p>首先需要启动Hive远程服务：hive –service hiveserver</p>
+
+<ul>
+  <li>JDBC</li>
+  <li>Thrift Client</li>
+</ul>
+
+<p>Hive的JDBC客户端操作</p>
+
+<ol>
+  <li>获取连接</li>
+  <li>创建运行环境</li>
+  <li>执行HQL</li>
+  <li>处理结果</li>
+  <li>释放资源</li>
+</ol>
+
+<p>hive-jdbc-…jar 这个就是hive的jdbc文件。</p>
+
+	  </div>
+
+		  
+
+		  
+
+		<hr>
+
+		<div>
+      <section class="share col-sm-6">
+        <h4 class="section-title">Share Post</h4>
+        <a class="btn btn-default btn-sm twitter" href="http://twitter.com/share?text=Hive学习笔记2&via=dbtek"
+           onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+          <i class="fa fa-twitter fa-lg"></i>
+          Twitter
+        </a>
+        <a class="btn btn-default btn-sm facebook" href="https://www.facebook.com/sharer/sharer.php"
+           onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+          <i class="fa fa-facebook fa-lg"></i>
+          Facebook
+        </a>
+        <a class="btn btn-default btn-sm gplus"
+           onclick="window.open('https://plus.google.com/share?url='+window.location.href, 'google-plus-share', 'width=490,height=530');return false;">
+          <i class="fa fa-google-plus fa-lg"></i>
+          Google+
+        </a>
+      </section>
+
+      <!--<section class="col-sm-6 author">
+        <img src="http://www.gravatar.com/avatar/726351295ec82e145928582f595aa3aa" class="img-rounded author-image" />
+        <h4 class="section-title author-name">wangmin</h4>
+        <p class="author-bio">enjoy life, enjoy coding</p>
+      </section>-->
+    </div>
+
+    <div class="clearfix"></div>
+
+		<ul class="pager">
+		  
+		  <li class="previous"><a href="/2015/08/02/Hive%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01.html" title="Hive学习笔记1">&larr; Previous</a></li>
+		  
+		  
+		  <li class="next"><a href="/2015/08/09/Java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B08.html" title="Java学习笔记8">Next &rarr;</a></li>
+		  
+		</ul>
+
+		<hr>
+	</div>
+	
+	<div class="col-sm-2 sidebar-2">
+	
+	</div>
+</article>
+<div class="clearfix"></div>
+
+
+	</div>
+
+	<script type="text/javascript" src="/assets/resources/jquery/jquery.min.js"></script>
+	<script type="text/javascript" src="/assets/resources/bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="/assets/js/app.js"></script>
+</body>
+</html>
+
