@@ -7,6 +7,135 @@
 		<atom:link href="/" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Java线程池</title>
+				<description>&lt;h4 id=&quot;section&quot;&gt;线程池&lt;/h4&gt;
+
+&lt;p&gt;为什么使用线程池：&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;减少创建和销毁线程的次数。&lt;/li&gt;
+  &lt;li&gt;可以根据系统的承受能力，调整线程池中的线程的数量。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Java里面线程池的顶级接口是：Executor，但其是一个接口，真正的线程池是：ExecutorService&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;名称&lt;/th&gt;
+      &lt;th&gt;说明&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;ExecutorService&lt;/td&gt;
+      &lt;td&gt;能和Timer/TimerTask类似，解决那些需要任务重复执行的问题。&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;ThreadPoolExecutor&lt;/td&gt;
+      &lt;td&gt;ExecutorService的默认实现。&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;ScheduledThreadPoolExecutor&lt;/td&gt;
+      &lt;td&gt;继承ThreadPoolExecutor的ScheduledExecutorService接口实现，周期性任务调度的类实现。&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;配置一个线程池比较复杂，Executors类里面提供了一些静态工厂方法，生成一些常用的线程池。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;newSingleThreadExecutor：这是一个单线程池，也就是该线程池只有一个线程在工作，所有的任务是串行执行的，如果这个唯一的线程因为异常结束，那么会有一个新的线程来替代它，此线程池保证所有任务的执行顺序按照任务的提交顺序执行。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;newFixedThreadPool：创建固定大小的线程池。每次提交一个任务就创建一个线程，直到线程达到线程池的最大大小，线程池的大小一旦达到最大值就会保持不变，如果某个线程因为执行异常而结束，那么线程池会补充一个新线程。&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;newCachedThreadPool：创建一个可缓存的线程池。如果线程池的大小超过了处理任务所需要的线程&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;newScheduledThreadPool：创建一个大小无限的线程池。此线程池支持定时以及周期性执行任务的需求。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;ThreadPoolExecutor是ExecutorService的默认实现，Executors里面就是调用的ThreadPoolExecutor。&lt;/p&gt;
+
+&lt;p&gt;强烈建议程序员使用较为方便的：Executors.newCacheThreadPool() 因为这个会自动回收线程。&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;Java线程的创建和销毁是有很大的开销的，所以这个时候需要线程池。
+java.util.concurrent.ThreadPoolExecutor类是线程池中最为核心的一个类，ThreadPoolExecutor集成了AbstractExecutorService，并且提供了四个构造方法，&lt;/p&gt;
+
+&lt;p&gt;```
+public class ThreadPoolExecutor extends AbstractExecutorService {
+    …..
+    public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,
+            BlockingQueue&lt;runnable&gt; workQueue);&lt;/runnable&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,
+        BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,ThreadFactory threadFactory);
+
+public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,
+        BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,RejectedExecutionHandler handler);
+
+public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit unit,
+    BlockingQueue&amp;lt;Runnable&amp;gt; workQueue,ThreadFactory threadFactory,RejectedExecutionHandler handler);
+... } ```
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;到这里，大家应该明白了ThreadPoolExecutor、AbstractExecutorService、ExecutorService和Executor几个之间的关系了。&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Executor是一个顶层接口，在它里面只声明了一个方法execute(Runnable)，返回值为void，参数为Runnable类型，从字面意思可以理解，就是用来执行传进去的任务的；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;然后ExecutorService接口继承了Executor接口，并声明了一些方法：submit、invokeAll、invokeAny以及shutDown等；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;抽象类AbstractExecutorService实现了ExecutorService接口，基本实现了ExecutorService中声明的所有方法；
+　　&lt;/li&gt;
+  &lt;li&gt;然后ThreadPoolExecutor继承了类AbstractExecutorService。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;线程池的关闭：&lt;/p&gt;
+
+&lt;p&gt;ThreadPoolExecutor提供了两个方法，用于线程池的关闭，分别是shutdown()和shutdownNow()&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;shutdown(): 不会立即的终止线程池，而是要等所有任务缓存队列中的任务都执行完后才终止，但再也不会接受新的任务&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;shutdownNow()：立即终止线程池，并尝试打断正在执行的任务，并且清空任务缓存队列，返回尚未执行的任务&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;hr /&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;newFixedThreadPool创建的线程池corePoolSize和maximumPoolSize值是相等的，它使用的LinkedBlockingQueue；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;newSingleThreadExecutor将corePoolSize和maximumPoolSize都设置为1，也使用的LinkedBlockingQueue；&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;newCachedThreadPool将corePoolSize设置为0，将maximumPoolSize设置为Integer.MAX_VALUE，使用的SynchronousQueue，也就是说来了任务就创建线程运行，当线程空闲超过60秒，就销毁线程。&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+</description>
+				<pubDate>Fri, 09 Oct 2015 00:00:00 +0800</pubDate>
+				<link>/2015/10/09/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0.html</link>
+				<guid isPermaLink="true">/2015/10/09/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0.html</guid>
+			</item>
+		
+			<item>
 				<title>Java学习笔记9</title>
 				<description>&lt;h4 id=&quot;section&quot;&gt;多线程&lt;/h4&gt;
 
@@ -1450,57 +1579,6 @@ Map m = Collecionts.synchronizedMap(new HashMap());
 				<pubDate>Tue, 07 Jul 2015 00:00:00 +0800</pubDate>
 				<link>/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html</link>
 				<guid isPermaLink="true">/2015/07/07/spark-jobserver%E7%9A%84%E5%AE%89%E8%A3%85.html</guid>
-			</item>
-		
-			<item>
-				<title>Java学习笔记3</title>
-				<description>&lt;h4 id=&quot;string--stringbuffer--stringbuilder---&quot;&gt;String / StringBuffer / StringBuilder / 时间 的使用&lt;/h4&gt;
-
-&lt;p&gt;&lt;strong&gt;String StringBuffer StringBuilder&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;String 类是不可变类，一旦创建以后，包含在这个对象中的字符序列是不可以改变的，直至这个对象被销毁。&lt;/p&gt;
-
-&lt;p&gt;StringBuffer 和 StringBuilder则是代表一个字符序列可变的类，他们提供了append() insert() reverse() setChartAt() setLength() 方法来改变这个字符序列。&lt;/p&gt;
-
-&lt;p&gt;StringBuffer 和 StringBuilder两个类的用法基本相似，但是StringBuffer是线程安全的，而StringBuilder则没有实现线程安全的功能。所以StringBuilder的性能要高一些。&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Date类&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;Java 提供Date类来处理日期与时间。由于Date存在的时间比较悠久导致很多构造方法都已经过时，不再推荐使用。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Date()
-Date(long date)
-boolean after(Date when)
-.........before.........
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;由于Date的过时，现在大部分都是使用Calendar工具类。Calendar是一个抽象类，不能直接实例化。但是它提供了几个静态的getInstance()方法来获取Calendar对象。&lt;/p&gt;
-
-&lt;p&gt;Calendar 与 Date之间的转换。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Calendar cl = Calendar.getInstance();
-Date date = cl.getTime();
-
-/**
- * 
- * Calendar 提供了add、set方法，field的类型有：Calendar.YEAR Calendar.MONTH....
- * 但是需要注意的是： Calendar.MONTH字段代表的月份，月份的起始值不是1，而是0。
- * @author wangmin
- *
- */
-public class CalendarTest {
-	public static void main(String[] args) {
-		Calendar c = Calendar.getInstance();
-		System.out.println(c.get(Calendar.YEAR));
-		System.out.println(c.get(Calendar.MONDAY));
-		System.out.println(c.get(Calendar.MONTH));
-	}
-}
-&lt;/code&gt;&lt;/pre&gt;
-</description>
-				<pubDate>Mon, 06 Jul 2015 00:00:00 +0800</pubDate>
-				<link>/2015/07/06/Java%E7%AC%94%E8%AE%B03.html</link>
-				<guid isPermaLink="true">/2015/07/06/Java%E7%AC%94%E8%AE%B03.html</guid>
 			</item>
 		
 	</channel>
